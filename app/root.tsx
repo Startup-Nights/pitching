@@ -27,9 +27,9 @@ function classNames(...classes: string[]) {
 }
 
 const navigation = [
-  { name: 'Overview', href: '/', icon: GlobeAltIcon },
-  { name: 'Signup', href: '/signup', icon: ClipboardDocumentListIcon },
-  { name: 'Vote', href: '/vote', icon: ChartBarSquareIcon },
+  { name: 'Overview', href: '/', icon: GlobeAltIcon, disabled: false },
+  { name: 'Signup', href: '/signup', icon: ClipboardDocumentListIcon, disabled: false },
+  { name: 'Vote', href: '/vote', icon: ChartBarSquareIcon, disabled: true },
 ]
 const events = [
   { id: 1, name: 'Seed', href: '/events/seed', initial: 'S', current: false },
@@ -102,17 +102,19 @@ export function Layout({ children }: { children: React.ReactNode }) {
                             <ul role="list" className="-mx-2 space-y-1">
                               {navigation.map((item) => (
                                 <li key={item.name}>
-                                  <NavLink
-                                    to={item.href}
-                                    className={({ isActive, isPending }) => classNames(isActive
-                                      ? 'bg-gray-800 text-white'
-                                      : 'text-gray-400 hover:bg-gray-800 hover:text-white',
-                                      'group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6',
-                                    )}
-                                  >
-                                    <item.icon className="h-6 w-6 shrink-0" aria-hidden="true" />
-                                    {item.name}
-                                  </NavLink>
+                                  {!item.disabled && (
+                                    <NavLink
+                                      to={item.href}
+                                      className={({ isActive, isPending }) => classNames(isActive || isPending
+                                        ? 'bg-gray-800 text-white'
+                                        : 'text-gray-400 hover:bg-gray-800 hover:text-white',
+                                        'group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6',
+                                      )}
+                                    >
+                                      <item.icon className="h-6 w-6 shrink-0" aria-hidden="true" />
+                                      {item.name}
+                                    </NavLink>
+                                  )}
                                 </li>
                               ))}
                             </ul>
@@ -180,18 +182,20 @@ export function Layout({ children }: { children: React.ReactNode }) {
                     <ul role="list" className="-mx-2 space-y-1">
                       {navigation.map((item) => (
                         <li key={item.name}>
-                          <NavLink
-                            to={item.href}
-                            className={({ isActive, isPending }) => classNames(
-                              isActive || isPending
-                                ? 'bg-gray-800 text-white'
-                                : 'text-gray-400 hover:bg-gray-800 hover:text-white',
-                              'group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6',
-                            )}
-                          >
-                            <item.icon className="h-6 w-6 shrink-0" aria-hidden="true" />
-                            {item.name}
-                          </NavLink>
+                          {!item.disabled && (
+                            <NavLink
+                              to={item.href}
+                              className={({ isActive, isPending }) => classNames(
+                                isActive || isPending
+                                  ? 'bg-gray-800 text-white'
+                                  : 'text-gray-400 hover:bg-gray-800 hover:text-white',
+                                'group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6',
+                              )}
+                            >
+                              <item.icon className="h-6 w-6 shrink-0" aria-hidden="true" />
+                              {item.name}
+                            </NavLink>
+                          )}
                         </li>
                       ))}
                     </ul>
