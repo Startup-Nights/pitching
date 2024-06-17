@@ -12,6 +12,7 @@ import { LinksFunction } from "@remix-run/node";
 import { useState } from 'react'
 import { Dialog, DialogPanel, Transition, TransitionChild } from '@headlessui/react'
 import {
+  Bars3Icon,
   ChartBarSquareIcon,
   ClipboardDocumentListIcon,
   GlobeAltIcon,
@@ -47,7 +48,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Meta />
         <Links />
       </head>
-      <body className="h-full">
+      <body className="h-full relative">
         <div>
           <Transition show={sidebarOpen}>
             <Dialog className="relative z-50 xl:hidden" onClose={setSidebarOpen}>
@@ -105,6 +106,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
                                   {!item.disabled && (
                                     <NavLink
                                       to={item.href}
+                                      onClick={() => setSidebarOpen(false)}
                                       className={({ isActive, isPending }) => classNames(isActive || isPending
                                         ? 'bg-gray-800 text-white'
                                         : 'text-gray-400 hover:bg-gray-800 hover:text-white',
@@ -126,6 +128,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
                                 <li key={event.name}>
                                   <NavLink
                                     to={event.href}
+                                    onClick={() => setSidebarOpen(false)}
                                     className={({ isActive, isPending }) => classNames(
                                       isActive || isPending
                                         ? 'bg-gray-800 text-white'
@@ -225,6 +228,15 @@ export function Layout({ children }: { children: React.ReactNode }) {
                   </li>
                 </ul>
               </nav>
+            </div>
+          </div>
+
+          <div className="xl:pl-72">
+            <div className="sticky top-0 z-40 flex h-16 shrink-0 items-center gap-x-6 border-b border-white/5 bg-gray-900 px-4 shadow-sm sm:px-6 lg:px-8">
+              <button type="button" className="-m-2.5 p-2.5 text-white xl:hidden" onClick={() => setSidebarOpen(true)}>
+                <span className="sr-only">Open sidebar</span>
+                <Bars3Icon className="h-5 w-5" aria-hidden="true" />
+              </button>
             </div>
           </div>
 
