@@ -2,17 +2,35 @@
 export default $config({
   app(input) {
     return {
-      name: "voting",
+      name: "PitchingSessions",
       removal: input?.stage === "production" ? "retain" : "remove",
       home: "aws",
     };
   },
   async run() {
-    const bucket = new sst.aws.Bucket("MyBucket", {
+    const bucket = new sst.aws.Bucket("PitchingSessionsBucket", {
       public: true
     });
 
-    new sst.aws.Remix("MyWeb", {
+    const table = new sst.aws.Dynamo("PitchingSignups", {
+      fields: {
+        startup: "string",
+        website: "string",
+        email: "string",
+        firstname: "string",
+        lastname: "string",
+        pitchdeck: "string",
+      },
+      primaryIndex: { hashKey: "startup", rangeKey: "email" },
+      localIndexes: {
+        WebsiteIndex: { rangeKey: "website" },
+        FirstnameIndex: { rangeKey: "firstname" },
+        LastnameIndex: { rangeKey: "lastname" },
+        PitchIndex: { rangeKey: "pitchdeck" },
+      },
+    });
+
+    new sst.aws.Remix("PitchingSessions", {
       link: [
         bucket,
       ],

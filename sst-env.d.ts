@@ -3,13 +3,17 @@
 import "sst"
 declare module "sst" {
   export interface Resource {
-    MyBucket: {
+    PitchingSessions: {
+      type: "sst.aws.Remix"
+      url: string
+    }
+    PitchingSessionsBucket: {
       name: string
       type: "sst.aws.Bucket"
     }
-    MyWeb: {
-      type: "sst.aws.Remix"
-      url: string
+    PitchingSignups: {
+      name: string
+      type: "sst.aws.Dynamo"
     }
   }
 }
