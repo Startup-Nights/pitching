@@ -8,32 +8,30 @@ export default $config({
     };
   },
   async run() {
-    const bucket = new sst.aws.Bucket("PitchingSessionsBucket", {
-      public: true
+    const vpc = new sst.aws.Vpc("MyVpc");
+    const rds = new sst.aws.Postgres("MyPostgres", { vpc });
+
+    // post function to save the form data into the database
+    const api = new sst.aws.Function("MyApi", {
+      url: true,
+      link: [rds],
+      handler: "src/api.handler",
     });
 
-    const table = new sst.aws.Dynamo("PitchingSignups", {
-      fields: {
-        startup: "string",
-        website: "string",
-        email: "string",
-        firstname: "string",
-        lastname: "string",
-        pitchdeck: "string",
-      },
-      primaryIndex: { hashKey: "startup", rangeKey: "email" },
-      localIndexes: {
-        WebsiteIndex: { rangeKey: "website" },
-        FirstnameIndex: { rangeKey: "firstname" },
-        LastnameIndex: { rangeKey: "lastname" },
-        PitchIndex: { rangeKey: "pitchdeck" },
-      },
+    // bucket for the pitching decks
+    const bucket = new sst.aws.Bucket("PitchingSessionsBucket", {
+      public: true
     });
 
     new sst.aws.Remix("PitchingSessions", {
       link: [
         bucket,
+        rds,
       ],
     });
+
+    return {
+      api: api.url,
+    }
   },
 });

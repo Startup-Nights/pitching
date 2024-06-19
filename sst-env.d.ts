@@ -3,6 +3,17 @@
 import "sst"
 declare module "sst" {
   export interface Resource {
+    MyApi: {
+      name: string
+      type: "sst.aws.Function"
+      url: string
+    }
+    MyPostgres: {
+      clusterArn: string
+      database: string
+      secretArn: string
+      type: "sst.aws.Postgres"
+    }
     PitchingSessions: {
       type: "sst.aws.Remix"
       url: string
@@ -10,10 +21,6 @@ declare module "sst" {
     PitchingSessionsBucket: {
       name: string
       type: "sst.aws.Bucket"
-    }
-    PitchingSignups: {
-      name: string
-      type: "sst.aws.Dynamo"
     }
   }
 }
