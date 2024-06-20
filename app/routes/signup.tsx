@@ -27,12 +27,12 @@ export async function loader() {
 export default function Signup() {
   const data = useLoaderData<typeof loader>();
 
-  const submit = async (e: any) => {
+  const on_submit = async (e: any) => {
     e.preventDefault();
+    const form_data = e.target as HTMLFormElement
+    const file = form_data.pitchdeck.files?.[0]!;
 
-    const file = (e.target as HTMLFormElement).pitchdeck.files?.[0]!;
-
-    const image = await fetch(data.url_pitchdeck, {
+    const pitchdeck = await fetch(data.url_pitchdeck, {
       body: file,
       method: "PUT",
       headers: {
@@ -41,25 +41,21 @@ export default function Signup() {
       },
     });
 
-    console.log("uploaded file: " + image.url.split("?")[0]);
-
-    const testdata = {
-      firstname: 'mischa',
-      lastname: 'jörg',
-      email: 'test@test.ch',
-      company: 'bytes at work ag',
-      website: 'https://bytesatwork.ch',
-      linkedin: 'https://bytesatwork.ch',
-      pitching_deck: image.url.split("?")[0],
-      round: 'pre-seed',
-      is_raising_funds: false,
-      has_already_pitched_to_investors: false,
-      applied_on: new Date().toDateString(),
-      approved: false
-    }
-
     const registrations = await fetch(data.url_registration_add, {
-      body: JSON.stringify(testdata),
+      body: JSON.stringify({
+        firstname: form_data.first_name.value,
+        lastname: form_data.last_name.value,
+        email: form_data.email.value,
+        company: form_data.company.value,
+        website: form_data.website.value,
+        linkedin: form_data.linkedin.value,
+        pitching_deck: pitchdeck.url.split("?")[0],
+        round: form_data.round.value,
+        is_raising_funds: false,
+        has_already_pitched_to_investors: false,
+        applied_on: new Date().toDateString(),
+        approved: false
+      }),
       method: "PUT",
     });
   }
@@ -67,53 +63,48 @@ export default function Signup() {
   return (
     <div className="xl:pl-72 max-w-6xl">
       <div className="px-4 sm:px-6 lg:px-8 pt-11">
-        <form onSubmit={async (e) => submit(e)}>
+        <form onSubmit={async (e) => on_submit(e)}>
           <div className="space-y-12">
             <div className="border-b border-white/10 pb-12">
-              <h2 className="text-base font-semibold leading-7 text-white">Profile</h2>
+              <h2 className="text-base font-semibold leading-7 text-white">Company information</h2>
               <p className="mt-1 text-sm leading-6 text-gray-400">
-                This information will be displayed publicly so be careful what you share.
+                Share with the jury what makes your company unique and give a glimpse into your vision.
               </p>
 
               <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-                <div className="sm:col-span-4">
-                  <label htmlFor="username" className="block text-sm font-medium leading-6 text-white">
-                    Username
+                <div className="sm:col-span-3">
+                  <label htmlFor="company" className="block text-sm font-medium leading-6 text-white">
+                    Company Name
                   </label>
                   <div className="mt-2">
-                    <div className="flex rounded-md bg-white/5 ring-1 ring-inset ring-white/10 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-500">
-                      <span className="flex select-none items-center pl-3 text-gray-500 sm:text-sm">workcation.com/</span>
-                      <input
-                        type="text"
-                        name="username"
-                        id="username"
-                        autoComplete="username"
-                        className="flex-1 border-0 bg-transparent py-1.5 pl-1 text-white focus:ring-0 sm:text-sm sm:leading-6"
-                        placeholder="janesmith"
-                      />
-                    </div>
+                    <input
+                      type="text"
+                      name="company"
+                      id="company"
+                      required
+                      className="block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6"
+                    />
                   </div>
                 </div>
 
-                <div className="col-span-full">
-                  <label htmlFor="about" className="block text-sm font-medium leading-6 text-white">
-                    About
+                <div className="sm:col-span-3">
+                  <label htmlFor="website" className="block text-sm font-medium leading-6 text-white">
+                    Website
                   </label>
                   <div className="mt-2">
-                    <textarea
-                      id="about"
-                      name="about"
-                      rows={3}
+                    <input
+                      type="text"
+                      name="website"
+                      id="website"
+                      required
                       className="block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6"
-                      defaultValue={''}
                     />
                   </div>
-                  <p className="mt-3 text-sm leading-6 text-gray-400">Write a few sentences about yourself.</p>
                 </div>
 
                 <div className="col-span-full">
                   <label htmlFor="cover-photo" className="block text-sm font-medium leading-6 text-white">
-                    Cover photo
+                    Pitchdeck
                   </label>
                   <div className="mt-2 flex justify-center rounded-lg border border-dashed border-white/25 px-6 py-10">
                     <div className="text-center">
@@ -124,7 +115,7 @@ export default function Signup() {
                           className="relative cursor-pointer rounded-md bg-gray-900 font-semibold text-white focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2 focus-within:ring-offset-gray-900 hover:text-indigo-500"
                         >
                           <span>Upload a file</span>
-                          <input id="pitchdeck" name="pitchdeck" type="file" className="sr-only" />
+                          <input id="pitchdeck" required name="pitchdeck" type="file" className="sr-only" />
                         </label>
                         <p className="pl-1">or drag and drop</p>
                       </div>
@@ -141,14 +132,15 @@ export default function Signup() {
 
               <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
                 <div className="sm:col-span-3">
-                  <label htmlFor="first-name" className="block text-sm font-medium leading-6 text-white">
+                  <label htmlFor="first_name" className="block text-sm font-medium leading-6 text-white">
                     First name
                   </label>
                   <div className="mt-2">
                     <input
                       type="text"
-                      name="first-name"
-                      id="first-name"
+                      name="first_name"
+                      id="first_name"
+                      required
                       autoComplete="given-name"
                       className="block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6"
                     />
@@ -156,27 +148,29 @@ export default function Signup() {
                 </div>
 
                 <div className="sm:col-span-3">
-                  <label htmlFor="last-name" className="block text-sm font-medium leading-6 text-white">
+                  <label htmlFor="last_name" className="block text-sm font-medium leading-6 text-white">
                     Last name
                   </label>
                   <div className="mt-2">
                     <input
                       type="text"
-                      name="last-name"
-                      id="last-name"
+                      name="last_name"
+                      id="last_name"
+                      required
                       autoComplete="family-name"
                       className="block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6"
                     />
                   </div>
                 </div>
 
-                <div className="sm:col-span-4">
+                <div className="sm:col-span-3">
                   <label htmlFor="email" className="block text-sm font-medium leading-6 text-white">
                     Email address
                   </label>
                   <div className="mt-2">
                     <input
                       id="email"
+                      required
                       name="email"
                       type="email"
                       autoComplete="email"
@@ -186,180 +180,53 @@ export default function Signup() {
                 </div>
 
                 <div className="sm:col-span-3">
-                  <label htmlFor="country" className="block text-sm font-medium leading-6 text-white">
-                    Country
-                  </label>
-                  <div className="mt-2">
-                    <select
-                      id="country"
-                      name="country"
-                      autoComplete="country-name"
-                      className="block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6 [&_*]:text-black"
-                    >
-                      <option>United States</option>
-                      <option>Canada</option>
-                      <option>Mexico</option>
-                    </select>
-                  </div>
-                </div>
-
-                <div className="col-span-full">
-                  <label htmlFor="street-address" className="block text-sm font-medium leading-6 text-white">
-                    Street address
+                  <label htmlFor="email" className="block text-sm font-medium leading-6 text-white">
+                    Linkedin
                   </label>
                   <div className="mt-2">
                     <input
+                      id="linkedin"
+                      required
+                      name="linkedin"
                       type="text"
-                      name="street-address"
-                      id="street-address"
-                      autoComplete="street-address"
                       className="block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6"
                     />
                   </div>
                 </div>
 
-                <div className="sm:col-span-2 sm:col-start-1">
-                  <label htmlFor="city" className="block text-sm font-medium leading-6 text-white">
-                    City
-                  </label>
-                  <div className="mt-2">
-                    <input
-                      type="text"
-                      name="city"
-                      id="city"
-                      autoComplete="address-level2"
-                      className="block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6"
-                    />
-                  </div>
-                </div>
-
-                <div className="sm:col-span-2">
-                  <label htmlFor="region" className="block text-sm font-medium leading-6 text-white">
-                    State / Province
-                  </label>
-                  <div className="mt-2">
-                    <input
-                      type="text"
-                      name="region"
-                      id="region"
-                      autoComplete="address-level1"
-                      className="block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6"
-                    />
-                  </div>
-                </div>
-
-                <div className="sm:col-span-2">
-                  <label htmlFor="postal-code" className="block text-sm font-medium leading-6 text-white">
-                    ZIP / Postal code
-                  </label>
-                  <div className="mt-2">
-                    <input
-                      type="text"
-                      name="postal-code"
-                      id="postal-code"
-                      autoComplete="postal-code"
-                      className="block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6"
-                    />
-                  </div>
-                </div>
               </div>
             </div>
 
             <div className="border-b border-white/10 pb-12">
-              <h2 className="text-base font-semibold leading-7 text-white">Notifications</h2>
-              <p className="mt-1 text-sm leading-6 text-gray-400">
-                We'll always let you know about important changes, but you pick what else you want to hear about.
-              </p>
-
               <div className="mt-10 space-y-10">
                 <fieldset>
-                  <legend className="text-sm font-semibold leading-6 text-white">By Email</legend>
-                  <div className="mt-6 space-y-6">
-                    <div className="relative flex gap-x-3">
-                      <div className="flex h-6 items-center">
-                        <input
-                          id="comments"
-                          name="comments"
-                          type="checkbox"
-                          className="h-4 w-4 rounded border-white/10 bg-white/5 text-indigo-600 focus:ring-indigo-600 focus:ring-offset-gray-900"
-                        />
-                      </div>
-                      <div className="text-sm leading-6">
-                        <label htmlFor="comments" className="font-medium text-white">
-                          Comments
-                        </label>
-                        <p className="text-gray-400">Get notified when someones posts a comment on a posting.</p>
-                      </div>
-                    </div>
-                    <div className="relative flex gap-x-3">
-                      <div className="flex h-6 items-center">
-                        <input
-                          id="candidates"
-                          name="candidates"
-                          type="checkbox"
-                          className="h-4 w-4 rounded border-white/10 bg-white/5 text-indigo-600 focus:ring-indigo-600 focus:ring-offset-gray-900"
-                        />
-                      </div>
-                      <div className="text-sm leading-6">
-                        <label htmlFor="candidates" className="font-medium text-white">
-                          Candidates
-                        </label>
-                        <p className="text-gray-400">Get notified when a candidate applies for a job.</p>
-                      </div>
-                    </div>
-                    <div className="relative flex gap-x-3">
-                      <div className="flex h-6 items-center">
-                        <input
-                          id="offers"
-                          name="offers"
-                          type="checkbox"
-                          className="h-4 w-4 rounded border-white/10 bg-white/5 text-indigo-600 focus:ring-indigo-600 focus:ring-offset-gray-900"
-                        />
-                      </div>
-                      <div className="text-sm leading-6">
-                        <label htmlFor="offers" className="font-medium text-white">
-                          Offers
-                        </label>
-                        <p className="text-gray-400">Get notified when a candidate accepts or rejects an offer.</p>
-                      </div>
-                    </div>
-                  </div>
-                </fieldset>
-                <fieldset>
-                  <legend className="text-sm font-semibold leading-6 text-white">Push Notifications</legend>
-                  <p className="mt-1 text-sm leading-6 text-gray-400">These are delivered via SMS to your mobile phone.</p>
+                  <legend className="text-sm font-semibold leading-6 text-white">Which round do you apply for?</legend>
+                  <p className="mt-1 text-sm leading-6 text-gray-400">TODO: give some pointer what is considered seed / pre-seed.</p>
                   <div className="mt-6 space-y-6">
                     <div className="flex items-center gap-x-3">
                       <input
-                        id="push-everything"
-                        name="push-notifications"
+                        id="round-seed"
+                        required
+                        name="round"
                         type="radio"
+                        value={'seed'}
                         className="h-4 w-4 border-white/10 bg-white/5 text-indigo-600 focus:ring-indigo-600 focus:ring-offset-gray-900"
                       />
-                      <label htmlFor="push-everything" className="block text-sm font-medium leading-6 text-white">
-                        Everything
+                      <label htmlFor="round-seed" className="block text-sm font-medium leading-6 text-white">
+                        Seed
                       </label>
                     </div>
                     <div className="flex items-center gap-x-3">
                       <input
-                        id="push-email"
-                        name="push-notifications"
+                        id="round-pre-seed"
+                        required
+                        name="round"
                         type="radio"
+                        value={'pre-seed'}
                         className="h-4 w-4 border-white/10 bg-white/5 text-indigo-600 focus:ring-indigo-600 focus:ring-offset-gray-900"
                       />
-                      <label htmlFor="push-email" className="block text-sm font-medium leading-6 text-white">
-                        Same as email
-                      </label>
-                    </div>
-                    <div className="flex items-center gap-x-3">
-                      <input
-                        id="push-nothing"
-                        name="push-notifications"
-                        type="radio"
-                        className="h-4 w-4 border-white/10 bg-white/5 text-indigo-600 focus:ring-indigo-600 focus:ring-offset-gray-900"
-                      />
-                      <label htmlFor="push-nothing" className="block text-sm font-medium leading-6 text-white">
-                        No push notifications
+                      <label htmlFor="round-pre-seed" className="block text-sm font-medium leading-6 text-white">
+                        Pre-Seed
                       </label>
                     </div>
                   </div>
@@ -369,14 +236,11 @@ export default function Signup() {
           </div>
 
           <div className="mt-6 flex items-center justify-end gap-x-6">
-            <button type="button" className="text-sm font-semibold leading-6 text-white">
-              Cancel
-            </button>
             <button
               type="submit"
               className="rounded-md bg-indigo-500 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500"
             >
-              Save
+              Submit
             </button>
           </div>
         </form>

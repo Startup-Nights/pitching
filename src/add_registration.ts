@@ -34,10 +34,8 @@ export const handler: APIGatewayProxyHandlerV2 = async (evt) => {
 
   try {
     const response = await client.send(command)
-    console.log(response)
     return { statusCode: 200 }
   } catch (error) {
-    console.log(error)
     return { statusCode: 404 }
   }
 };

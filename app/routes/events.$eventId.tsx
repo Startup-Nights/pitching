@@ -41,25 +41,6 @@ export default function Index({ }) {
               <p className="mt-2 text-xs leading-6 text-gray-400">Startups and founders which signed for the {event.name} round</p>
             </div>
           </div>
-
-          {/* Stats */}
-          <div className="grid grid-cols-1 bg-gray-700/10 sm:grid-cols-2 lg:grid-cols-4">
-            {stats.map((stat, statIdx) => (
-              <div
-                key={stat.name}
-                className={classNames(
-                  statIdx % 2 === 1 ? 'sm:border-l' : statIdx === 2 ? 'lg:border-l' : '',
-                  'border-t border-white/5 px-4 py-6 sm:px-6 lg:px-8',
-                )}
-              >
-                <p className="text-sm font-medium leading-6 text-gray-400">{stat.name}</p>
-                <p className="mt-2 flex items-baseline gap-x-2">
-                  <span className="text-4xl font-semibold tracking-tight text-white">{stat.value}</span>
-                  {stat.unit ? <span className="text-sm text-gray-400">{stat.unit}</span> : null}
-                </p>
-              </div>
-            ))}
-          </div>
         </header>
 
         {/* Activity list */}
@@ -97,31 +78,31 @@ export default function Index({ }) {
                 <tr key={i}>
                   <td className="py-4 pl-4 pr-8 sm:pl-6 lg:pl-8">
                     <div className="flex items-center">
-                      <div className="truncate text-sm font-medium leading-6 text-white">{item.firstname} {item.lastname}</div>
+                      <div className="truncate overflow-hidden text-sm font-medium leading-6 text-white">{item.firstname} {item.lastname}</div>
                     </div>
                   </td>
                   <td className="py-4 pl-4 pr-8 sm:pl-6 lg:pl-8">
                     <div className="flex items-center">
-                      <div className="truncate text-sm font-medium leading-6 text-white">{item.company}</div>
+                      <div className="truncate overflow-hidden text-sm font-medium leading-6 text-white">{item.company}</div>
                     </div>
                   </td>
                   <td className="py-4 pl-4 pr-8 sm:pl-6 lg:pl-8">
                     <div className="flex items-center">
-                      <div className="truncate text-sm font-medium leading-6 text-white underline">
+                      <div className="truncate overflow-hidden text-sm font-medium leading-6 text-white underline">
                         <a href={item.website} target="_blank">{item.website}</a>
                       </div>
                     </div>
                   </td>
                   <td className="py-4 pl-4 pr-8 sm:pl-6 lg:pl-8">
                     <div className="flex items-center">
-                      <div className="truncate text-sm font-medium leading-6 text-white underline">
-                        <a href={item.pitching_deck} target="_blank">{item.pitching_deck}</a>
+                      <div className="truncate overflow-hidden text-sm font-medium leading-6 text-white underline">
+                        <a href={item.pitching_deck} target="_blank">Link</a>
                       </div>
                     </div>
                   </td>
                   <td className="py-4 pl-4 pr-8 sm:pl-6 lg:pl-8">
                     <div className="flex items-center">
-                      <div className="truncate text-sm font-medium leading-6 text-white">{item.applied_on}</div>
+                      <div className="truncate overflow-hidden text-sm font-medium leading-6 text-white">{item.applied_on}</div>
                     </div>
                   </td>
                 </tr>
@@ -130,6 +111,6 @@ export default function Index({ }) {
           </table>
         </div>
       </main>
-    </div>
+    </div >
   )
 }
