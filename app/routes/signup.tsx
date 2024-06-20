@@ -1,10 +1,94 @@
-import { PhotoIcon, UserCircleIcon } from '@heroicons/react/24/solid'
+import { GetObjectCommand, PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
+import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
+import { PhotoIcon } from '@heroicons/react/24/solid'
+import { json, useLoaderData } from '@remix-run/react'
+import { Resource } from 'sst';
+import * as crypto from "crypto";
 
-export default function Example() {
+export async function loader() {
+  const registrations_key = 'pitching_registrations.json'
+  const client = new S3Client({
+    region: 'us-east-1',
+  })
+
+  const get_command = new GetObjectCommand({
+    Bucket: Resource.PitchingSessionsBucket.name,
+    Key: registrations_key,
+  })
+  const response = await client.send(get_command)
+  const data = await response.Body?.transformToString()
+
+  const registrations = JSON.parse(data ? data : '[]')
+
+  const command = new PutObjectCommand({
+    Key: crypto.randomUUID(),
+    Bucket: Resource.PitchingSessionsBucket.name,
+  });
+  const url_pitchdeck = await getSignedUrl(client, command);
+
+  const registrations_command = new PutObjectCommand({
+    Key: registrations_key,
+    Bucket: Resource.PitchingSessionsBucket.name,
+  });
+  const url_registrations = await getSignedUrl(client, registrations_command);
+
+  return json({
+    url_pitchdeck: url_pitchdeck,
+    url_registrations: url_registrations,
+    registrations: registrations,
+  });
+}
+
+export default function Signup() {
+  const data = useLoaderData<typeof loader>();
+
+  const submit = async (e: any) => {
+    e.preventDefault();
+
+    const file = (e.target as HTMLFormElement).pitchdeck.files?.[0]!;
+
+    const image = await fetch(data.url_pitchdeck, {
+      body: file,
+      method: "PUT",
+      headers: {
+        "Content-Type": file.type,
+        "Content-Disposition": `attachment; filename="${file.name}"`,
+      },
+    });
+
+    console.log("uploaded file: " + image.url.split("?")[0]);
+
+    data.registrations.push({
+      firstname: 'mischa',
+      lastname: 'jörg',
+      email: 'test@test.ch',
+      company: 'bytes at work ag',
+      website: 'https://bytesatwork.ch',
+      linkedin: 'https://bytesatwork.ch',
+      pitching_deck: image.url.split("?")[0],
+      round: 'pre-seed',
+      is_raising_funds: false,
+      has_already_pitched_to_investors: false,
+      applied_on: new Date().toDateString(),
+      approved: false
+    })
+
+    const registrations = await fetch(data.url_registrations, {
+      body: JSON.stringify(data.registrations),
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        "Content-Disposition": `attachment; filename="pitching_registrations.json"`,
+      },
+    });
+
+    console.log("uploaded file: " + registrations.url.split("?")[0]);
+  }
+
   return (
     <div className="xl:pl-72 max-w-6xl">
       <div className="px-4 sm:px-6 lg:px-8 pt-11">
-        <form>
+        <form onSubmit={async (e) => submit(e)}>
           <div className="space-y-12">
             <div className="border-b border-white/10 pb-12">
               <h2 className="text-base font-semibold leading-7 text-white">Profile</h2>
@@ -49,21 +133,6 @@ export default function Example() {
                 </div>
 
                 <div className="col-span-full">
-                  <label htmlFor="photo" className="block text-sm font-medium leading-6 text-white">
-                    Photo
-                  </label>
-                  <div className="mt-2 flex items-center gap-x-3">
-                    <UserCircleIcon className="h-12 w-12 text-gray-500" aria-hidden="true" />
-                    <button
-                      type="button"
-                      className="rounded-md bg-white/10 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-white/20"
-                    >
-                      Change
-                    </button>
-                  </div>
-                </div>
-
-                <div className="col-span-full">
                   <label htmlFor="cover-photo" className="block text-sm font-medium leading-6 text-white">
                     Cover photo
                   </label>
@@ -72,11 +141,11 @@ export default function Example() {
                       <PhotoIcon className="mx-auto h-12 w-12 text-gray-500" aria-hidden="true" />
                       <div className="mt-4 flex text-sm leading-6 text-gray-400">
                         <label
-                          htmlFor="file-upload"
+                          htmlFor="pitchdeck"
                           className="relative cursor-pointer rounded-md bg-gray-900 font-semibold text-white focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2 focus-within:ring-offset-gray-900 hover:text-indigo-500"
                         >
                           <span>Upload a file</span>
-                          <input id="file-upload" name="file-upload" type="file" className="sr-only" />
+                          <input id="pitchdeck" name="pitchdeck" type="file" className="sr-only" />
                         </label>
                         <p className="pl-1">or drag and drop</p>
                       </div>
