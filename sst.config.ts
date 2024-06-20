@@ -8,14 +8,27 @@ export default $config({
     };
   },
   async run() {
-    // bucket for the pitching decks
     const bucket = new sst.aws.Bucket("PitchingSessionsBucket", {
       public: true
+    });
+
+    const get_registrations = new sst.aws.Function("GetRegistrations", {
+      url: true,
+      link: [bucket],
+      handler: "src/get_registrations.handler",
+    });
+
+    const add_registration = new sst.aws.Function("AddRegistration", {
+      url: true,
+      link: [bucket],
+      handler: "src/add_registration.handler",
     });
 
     new sst.aws.Remix("PitchingSessions", {
       link: [
         bucket,
+        get_registrations,
+        add_registration,
       ],
     });
   },

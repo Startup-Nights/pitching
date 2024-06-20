@@ -1,24 +1,14 @@
-import { GetObjectCommand, PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { PhotoIcon } from '@heroicons/react/24/solid'
 import { json, useLoaderData } from '@remix-run/react'
 import { Resource } from 'sst';
 import * as crypto from "crypto";
+import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
 
 export async function loader() {
-  const registrations_key = 'pitching_registrations.json'
   const client = new S3Client({
     region: 'us-east-1',
   })
-
-  const get_command = new GetObjectCommand({
-    Bucket: Resource.PitchingSessionsBucket.name,
-    Key: registrations_key,
-  })
-  const response = await client.send(get_command)
-  const data = await response.Body?.transformToString()
-
-  const registrations = JSON.parse(data ? data : '[]')
 
   const command = new PutObjectCommand({
     Key: crypto.randomUUID(),
@@ -26,16 +16,11 @@ export async function loader() {
   });
   const url_pitchdeck = await getSignedUrl(client, command);
 
-  const registrations_command = new PutObjectCommand({
-    Key: registrations_key,
-    Bucket: Resource.PitchingSessionsBucket.name,
-  });
-  const url_registrations = await getSignedUrl(client, registrations_command);
+  const url_registration_add = Resource.AddRegistration.url
 
   return json({
     url_pitchdeck: url_pitchdeck,
-    url_registrations: url_registrations,
-    registrations: registrations,
+    url_registration_add: url_registration_add
   });
 }
 
@@ -58,7 +43,7 @@ export default function Signup() {
 
     console.log("uploaded file: " + image.url.split("?")[0]);
 
-    data.registrations.push({
+    const testdata = {
       firstname: 'mischa',
       lastname: 'jörg',
       email: 'test@test.ch',
@@ -71,18 +56,12 @@ export default function Signup() {
       has_already_pitched_to_investors: false,
       applied_on: new Date().toDateString(),
       approved: false
-    })
+    }
 
-    const registrations = await fetch(data.url_registrations, {
-      body: JSON.stringify(data.registrations),
+    const registrations = await fetch(data.url_registration_add, {
+      body: JSON.stringify(testdata),
       method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        "Content-Disposition": `attachment; filename="pitching_registrations.json"`,
-      },
     });
-
-    console.log("uploaded file: " + registrations.url.split("?")[0]);
   }
 
   return (

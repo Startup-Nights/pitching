@@ -1,4 +1,3 @@
-import { GetObjectCommand, S3Client } from "@aws-sdk/client-s3"
 import { Resource } from "sst"
 import { json, useLoaderData } from "@remix-run/react";
 
@@ -7,24 +6,9 @@ function classNames(...classes: string[]) {
 }
 
 export const loader = async ({ params }: any) => {
-  const registrations_key = 'pitching_registrations.json'
-  const client = new S3Client({
-    region: 'us-east-1',
-  })
-  const command = new GetObjectCommand({
-    Bucket: Resource.PitchingSessionsBucket.name,
-    Key: registrations_key,
-  })
-
-  const response = await client.send(command)
-  const data = await response.Body?.transformToString()
-
-  let registrations: Registration[] = []
-
-  if (data) {
-    registrations = JSON.parse(data)
-  }
-
+  const raw = await fetch(Resource.GetRegistrations.url);
+  const data = await raw.json()
+  const registrations: Registration[] = data ? data : []
   return json({
     name: params.eventId,
     registrations: registrations
