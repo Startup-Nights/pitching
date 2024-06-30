@@ -12,6 +12,8 @@ export default $config({
       public: true
     });
 
+    const slackWebhookUrl = new sst.Secret('SlackWebhookUrl')
+
     const get_registrations = new sst.aws.Function("GetRegistrations", {
       url: true,
       link: [bucket],
@@ -20,7 +22,10 @@ export default $config({
 
     const add_registration = new sst.aws.Function("AddRegistration", {
       url: true,
-      link: [bucket],
+      link: [
+        bucket,
+        slackWebhookUrl,
+      ],
       handler: "src/add_registration.handler",
     });
 

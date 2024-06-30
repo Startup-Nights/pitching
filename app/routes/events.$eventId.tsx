@@ -40,7 +40,6 @@ export default function Index({ }) {
   )
 }
 
-
 function EventTable({ event, name }: any) {
   const filtered_registrations = event.filter((item: any) => item.round === name)
 
@@ -54,22 +53,14 @@ function EventTable({ event, name }: any) {
             <col className="lg:w-2/12" />
             <col className="lg:w-2/12" />
             <col className="lg:w-2/12" />
-            <col className="lg:w-2/12" />
-            <col className="lg:w-2/12" />
           </colgroup>
           <thead className="border-b border-white/10 text-sm leading-6 text-white">
             <tr>
-              <th scope="col" className="py-2 pl-4 pr-8 font-semibold sm:pl-6 lg:pl-8">
-                Name
-              </th>
               <th scope="col" className="py-2 pl-0 pr-8 font-semibold sm:pl-6 lg:pl-8">
                 Company
               </th>
               <th scope="col" className="py-2 pl-0 pr-4 font-semibold sm:pl-6 lg:pl-8">
                 Website
-              </th>
-              <th scope="col" className="py-2 pl-0 pr-8 font-semibold sm:pl-6 lg:pl-8">
-                Pitching Deck
               </th>
               <th scope="col" className="py-2 pl-0 pr-4 font-semibold sm:pl-6 lg:pl-8">
                 Applied On
@@ -77,13 +68,8 @@ function EventTable({ event, name }: any) {
             </tr>
           </thead>
           <tbody className="divide-y divide-white/5">
-            {filtered_registrations.map((item, i) => (
+            {filtered_registrations.map((item: any, i: number) => (
               <tr key={i}>
-                <td className="py-4 pl-4 pr-8 sm:pl-6 lg:pl-8">
-                  <div className="flex items-center">
-                    <div className="truncate overflow-hidden text-sm font-medium leading-6 text-white">{item.firstname} {item.lastname}</div>
-                  </div>
-                </td>
                 <td className="py-4 pl-4 pr-8 sm:pl-6 lg:pl-8">
                   <div className="flex items-center">
                     <div className="truncate overflow-hidden text-sm font-medium leading-6 text-white">{item.company}</div>
@@ -93,13 +79,6 @@ function EventTable({ event, name }: any) {
                   <div className="flex items-center">
                     <div className="truncate overflow-hidden text-sm font-medium leading-6 text-white underline">
                       <a href={item.website} target="_blank">{item.website}</a>
-                    </div>
-                  </div>
-                </td>
-                <td className="py-4 pl-4 pr-8 sm:pl-6 lg:pl-8">
-                  <div className="flex items-center">
-                    <div className="truncate overflow-hidden text-sm font-medium leading-6 text-white underline">
-                      <a href={item.pitching_deck} target="_blank">Link</a>
                     </div>
                   </div>
                 </td>

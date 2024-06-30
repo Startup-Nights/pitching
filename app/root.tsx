@@ -13,9 +13,7 @@ import { useState } from 'react'
 import { Dialog, DialogPanel, Transition, TransitionChild } from '@headlessui/react'
 import {
   Bars3Icon,
-  ChartBarSquareIcon,
   ClipboardDocumentListIcon,
-  GlobeAltIcon,
   XMarkIcon,
 } from '@heroicons/react/24/outline'
 
@@ -28,9 +26,7 @@ function classNames(...classes: string[]) {
 }
 
 const navigation = [
-  { name: 'Overview', href: '/', icon: GlobeAltIcon, disabled: false },
-  { name: 'Signup', href: '/signup', icon: ClipboardDocumentListIcon, disabled: false },
-  { name: 'Vote', href: '/vote', icon: ChartBarSquareIcon, disabled: true },
+  { name: 'Signup', href: '/', icon: ClipboardDocumentListIcon, disabled: false },
 ]
 const events = [
   { id: 1, name: 'Seed', href: '/events/seed', initial: 'S', current: false },
