@@ -1,6 +1,6 @@
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { PhotoIcon } from '@heroicons/react/24/solid'
-import { json, useLoaderData } from '@remix-run/react'
+import { json, redirect, useLoaderData } from '@remix-run/react'
 import { Resource } from 'sst';
 import * as crypto from "crypto";
 import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
@@ -32,44 +32,149 @@ export default function Signup() {
     const form_data = e.target as HTMLFormElement
     const file = form_data.pitchdeck.files?.[0]!;
 
-    const pitchdeck = await fetch(data.url_pitchdeck, {
+    await fetch(data.url_pitchdeck, {
       body: file,
       method: "PUT",
       headers: {
         "Content-Type": file.type,
         "Content-Disposition": `attachment; filename="${file.name}"`,
       },
-    });
-
-    const registrations = await fetch(data.url_registration_add, {
-      body: JSON.stringify({
-        firstname: form_data.first_name.value,
-        lastname: form_data.last_name.value,
-        email: form_data.email.value,
-        company: form_data.company.value,
-        website: form_data.website.value,
-        linkedin: form_data.linkedin.value,
-        pitching_deck: pitchdeck.url.split("?")[0],
-        round: form_data.round.value,
-        is_raising_funds: false,
-        has_already_pitched_to_investors: false,
-        applied_on: new Date().toDateString(),
-        approved: false
-      }),
-      method: "PUT",
-    });
+    })
+      .then(async (pitchdeck) => {
+        await fetch(data.url_registration_add, {
+          body: JSON.stringify({
+            company: form_data.company.value,
+            website: form_data.website.value,
+            pitching_deck: pitchdeck?.url.split("?")[0],
+            problem_description: form_data.problem_description.value,
+            problem_solution: form_data.problem_solution.value,
+            problem_approach: form_data.problem_approach.value,
+            userbase: form_data.userbase.value,
+            revenue: form_data.revenue.value,
+            advantage: form_data.advantage.value,
+            money_usage: form_data.money_usage.value,
+            firstname: form_data.first_name.value,
+            lastname: form_data.last_name.value,
+            email: form_data.email.value,
+            linkedin: form_data.linkedin.value,
+            round: form_data.round.value,
+            is_raising_funds: false,
+            has_already_pitched_to_investors: false,
+            applied_on: new Date().toDateString(),
+            approved: false
+          }),
+          method: "PUT",
+        })
+          .then(() => redirect('/succes'))
+          .catch(err => {
+            console.log(`failed to put registration: ${err}`)
+          });
+      })
+      .catch(err => {
+        console.log(`failed to put pitchdeck: ${err}`)
+      });
   }
 
   return (
     <div className="xl:pl-72 max-w-6xl">
-      <div className="px-4 sm:px-6 lg:px-8 pt-11">
+      <div className="px-4 sm:px-6 lg:px-8 pt-11 mb-24">
+        <div className='my-12 border-b border-white/10 pb-12'>
+          <h2 className="text-3xl font-semibold leading-7 text-white">Signup for the pitching competition</h2>
+          <p className="mt-4 text-sm leading-6 text-gray-400">
+            Share with the jury what makes your company unique and give a glimpse into your vision.
+          </p>
+        </div>
+
         <form onSubmit={async (e) => on_submit(e)}>
           <div className="space-y-12">
+
+            <div className="border-b border-white/10 pb-12">
+              <h2 className="text-base font-semibold leading-7 text-white">Personal Information</h2>
+
+              <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+                <div className="sm:col-span-3">
+                  <label htmlFor="first_name" className="block text-sm font-medium leading-6 text-white">
+                    First name
+                  </label>
+                  <div className="mt-2">
+                    <input
+                      type="text"
+                      name="first_name"
+                      id="first_name"
+                      required
+                      autoComplete="given-name"
+                      className="block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6"
+                    />
+                  </div>
+                </div>
+
+                <div className="sm:col-span-3">
+                  <label htmlFor="last_name" className="block text-sm font-medium leading-6 text-white">
+                    Last name
+                  </label>
+                  <div className="mt-2">
+                    <input
+                      type="text"
+                      name="last_name"
+                      id="last_name"
+                      required
+                      autoComplete="family-name"
+                      className="block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6"
+                    />
+                  </div>
+                </div>
+
+                <div className="sm:col-span-3">
+                  <label htmlFor="email" className="block text-sm font-medium leading-6 text-white">
+                    Email address
+                  </label>
+                  <div className="mt-2">
+                    <input
+                      id="email"
+                      required
+                      name="email"
+                      type="email"
+                      autoComplete="email"
+                      className="block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6"
+                    />
+                  </div>
+                </div>
+
+                <div className="sm:col-span-3">
+                  <label htmlFor="linkedin" className="block text-sm font-medium leading-6 text-white">
+                    Linkedin
+                  </label>
+                  <div className="mt-2">
+                    <input
+                      id="linkedin"
+                      required
+                      name="linkedin"
+                      type="text"
+                      className="block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6"
+                    />
+                  </div>
+                </div>
+
+                <div className="sm:col-span-3">
+                  <label htmlFor="country" className="block text-sm font-medium leading-6 text-white">
+                    Country
+                  </label>
+                  <div className="mt-2">
+                    <input
+                      id="country"
+                      required
+                      name="country"
+                      type="text"
+                      className="block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6"
+                    />
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
             <div className="border-b border-white/10 pb-12">
               <h2 className="text-base font-semibold leading-7 text-white">Company information</h2>
-              <p className="mt-1 text-sm leading-6 text-gray-400">
-                Share with the jury what makes your company unique and give a glimpse into your vision.
-              </p>
 
               <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
                 <div className="sm:col-span-3">
@@ -217,92 +322,6 @@ export default function Signup() {
                       id="money_usage"
                       required
                       name="money_usage"
-                      className="block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6"
-                    />
-                  </div>
-                </div>
-
-              </div>
-            </div>
-
-            <div className="border-b border-white/10 pb-12">
-              <h2 className="text-base font-semibold leading-7 text-white">Personal Information</h2>
-              <p className="mt-1 text-sm leading-6 text-gray-400">Use a permanent address where you can receive mail.</p>
-
-              <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-                <div className="sm:col-span-3">
-                  <label htmlFor="first_name" className="block text-sm font-medium leading-6 text-white">
-                    First name
-                  </label>
-                  <div className="mt-2">
-                    <input
-                      type="text"
-                      name="first_name"
-                      id="first_name"
-                      required
-                      autoComplete="given-name"
-                      className="block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6"
-                    />
-                  </div>
-                </div>
-
-                <div className="sm:col-span-3">
-                  <label htmlFor="last_name" className="block text-sm font-medium leading-6 text-white">
-                    Last name
-                  </label>
-                  <div className="mt-2">
-                    <input
-                      type="text"
-                      name="last_name"
-                      id="last_name"
-                      required
-                      autoComplete="family-name"
-                      className="block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6"
-                    />
-                  </div>
-                </div>
-
-                <div className="sm:col-span-3">
-                  <label htmlFor="email" className="block text-sm font-medium leading-6 text-white">
-                    Email address
-                  </label>
-                  <div className="mt-2">
-                    <input
-                      id="email"
-                      required
-                      name="email"
-                      type="email"
-                      autoComplete="email"
-                      className="block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6"
-                    />
-                  </div>
-                </div>
-
-                <div className="sm:col-span-3">
-                  <label htmlFor="linkedin" className="block text-sm font-medium leading-6 text-white">
-                    Linkedin
-                  </label>
-                  <div className="mt-2">
-                    <input
-                      id="linkedin"
-                      required
-                      name="linkedin"
-                      type="text"
-                      className="block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6"
-                    />
-                  </div>
-                </div>
-
-                <div className="sm:col-span-3">
-                  <label htmlFor="country" className="block text-sm font-medium leading-6 text-white">
-                    Country
-                  </label>
-                  <div className="mt-2">
-                    <input
-                      id="country"
-                      required
-                      name="country"
-                      type="text"
                       className="block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6"
                     />
                   </div>
