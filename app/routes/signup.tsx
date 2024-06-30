@@ -1,6 +1,6 @@
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { PhotoIcon } from '@heroicons/react/24/solid'
-import { json, redirect, useLoaderData } from '@remix-run/react'
+import { json, redirectDocument, useLoaderData, useNavigate } from '@remix-run/react'
 import { Resource } from 'sst';
 import * as crypto from "crypto";
 import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
@@ -25,53 +25,54 @@ export async function loader() {
 }
 
 export default function Signup() {
-  const data = useLoaderData<typeof loader>();
+  const data = useLoaderData<typeof loader>()
+  const navigate = useNavigate()
 
   const on_submit = async (e: any) => {
     e.preventDefault();
     const form_data = e.target as HTMLFormElement
     const file = form_data.pitchdeck.files?.[0]!;
 
-    await fetch(data.url_pitchdeck, {
-      body: file,
-      method: "PUT",
-      headers: {
-        "Content-Type": file.type,
-        "Content-Disposition": `attachment; filename="${file.name}"`,
-      },
-    })
-      .then(async (pitchdeck) => {
-        await fetch(data.url_registration_add, {
-          body: JSON.stringify({
-            company: form_data.company.value,
-            website: form_data.website.value,
-            pitching_deck: pitchdeck?.url.split("?")[0],
-            problem_description: form_data.problem_description.value,
-            problem_solution: form_data.problem_solution.value,
-            problem_approach: form_data.problem_approach.value,
-            userbase: form_data.userbase.value,
-            revenue: form_data.revenue.value,
-            advantage: form_data.advantage.value,
-            money_usage: form_data.money_usage.value,
-            firstname: form_data.first_name.value,
-            lastname: form_data.last_name.value,
-            email: form_data.email.value,
-            linkedin: form_data.linkedin.value,
-            round: form_data.round.value,
-            is_raising_funds: false,
-            has_already_pitched_to_investors: false,
-            applied_on: new Date().toDateString(),
-            approved: false
-          }),
-          method: "PUT",
-        })
-          .then(() => redirect('/succes'))
-          .catch(err => {
-            console.log(`failed to put registration: ${err}`)
-          });
+    let pitchdeck = undefined
+
+    if (file) {
+      pitchdeck = await fetch(data.url_pitchdeck, {
+        body: file,
+        method: "PUT",
+        headers: {
+          "Content-Type": file.type,
+          "Content-Disposition": `attachment; filename="${file.name}"`,
+        },
       })
+    }
+
+    await fetch(data.url_registration_add, {
+      body: JSON.stringify({
+        company: form_data.company.value,
+        website: form_data.website.value,
+        pitching_deck: pitchdeck?.url.split("?")[0],
+        problem_description: form_data.problem_description.value,
+        problem_solution: form_data.problem_solution.value,
+        problem_approach: form_data.problem_approach.value,
+        userbase: form_data.userbase.value,
+        revenue: form_data.revenue.value,
+        advantage: form_data.advantage.value,
+        money_usage: form_data.money_usage.value,
+        firstname: form_data.first_name.value,
+        lastname: form_data.last_name.value,
+        email: form_data.email.value,
+        linkedin: form_data.linkedin.value,
+        round: form_data.round.value,
+        is_raising_funds: false,
+        has_already_pitched_to_investors: false,
+        applied_on: new Date().toDateString(),
+        approved: false
+      }),
+      method: "PUT",
+    })
+      .then(() => navigate('/'))
       .catch(err => {
-        console.log(`failed to put pitchdeck: ${err}`)
+        console.log(`failed to put registration: ${err}`)
       });
   }
 
