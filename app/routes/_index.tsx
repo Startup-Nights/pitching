@@ -66,9 +66,10 @@ export default function Signup() {
         lastname: form_data.last_name.value,
         email: form_data.email.value,
         linkedin: form_data.linkedin.value,
+        country: form_data.country.value,
         round: form_data.round.value,
-        is_raising_funds: false,
-        has_already_pitched_to_investors: false,
+        funding: form_data.funding.value,
+        pitching: form_data.pitching.value,
         applied_on: new Date().toDateString(),
         approved: false
       }),
@@ -338,37 +339,19 @@ export default function Signup() {
 
             <div className="border-b border-white/10 pb-12">
               <div className="mt-10 space-y-10">
-                <fieldset>
-                  <legend className="text-sm font-semibold leading-6 text-white">Which round do you apply for?</legend>
-                  <div className="mt-6 space-y-6">
-                    <div className="flex items-center gap-x-3">
-                      <input
-                        id="round-seed"
-                        required
-                        name="round"
-                        type="radio"
-                        value={'seed'}
-                        className="h-4 w-4 border-white/10 bg-white/5 text-indigo-600 focus:ring-indigo-600 focus:ring-offset-gray-900"
-                      />
-                      <label htmlFor="round-seed" className="block text-sm font-medium leading-6 text-white">
-                        Seed
-                      </label>
-                    </div>
-                    <div className="flex items-center gap-x-3">
-                      <input
-                        id="round-pre-seed"
-                        required
-                        name="round"
-                        type="radio"
-                        value={'pre-seed'}
-                        className="h-4 w-4 border-white/10 bg-white/5 text-indigo-600 focus:ring-indigo-600 focus:ring-offset-gray-900"
-                      />
-                      <label htmlFor="round-pre-seed" className="block text-sm font-medium leading-6 text-white">
-                        Pre-Seed
-                      </label>
-                    </div>
-                  </div>
-                </fieldset>
+                <Fieldset text={'Which round do you apply for?'} name={'round'} values={[{ id: 'round-seed', value: 'seed' }, { id: 'pre-seed', value: 'round-pre-seed' }]} />
+              </div>
+            </div>
+
+            <div className="border-b border-white/10 pb-12">
+              <div className="mt-10 space-y-10">
+                <Fieldset text={'Are you currently raising funds?'} name={'funding'} values={[{ id: 'founding-yes', value: 'yes' }, { id: 'founding-no', value: 'no' }]} />
+              </div>
+            </div>
+
+            <div className="border-b border-white/10 pb-12">
+              <div className="mt-10 space-y-10">
+                <Fieldset text={'Did you already pitch to investors?'} name={'pitching'} values={[{ id: 'pitching-yes', value: 'yes' }, { id: 'pitching-no', value: 'no' }]} />
               </div>
             </div>
           </div>
@@ -413,5 +396,32 @@ export default function Signup() {
         </form>
       </div >
     </div >
+  )
+}
+
+function Fieldset({ text, name, values }: any) {
+  return (
+    <div className="mt-10 space-y-10">
+      <fieldset>
+        <legend className="text-sm font-semibold leading-6 text-white">{text}</legend>
+        {values.map((item: any, i: number) => (
+          <div className="mt-6 space-y-6" key={item.id}>
+            <div className="flex items-center gap-x-3">
+              <input
+                id={item.id}
+                required
+                name={name}
+                type="radio"
+                value={item.value}
+                className="h-4 w-4 border-white/10 bg-white/5 text-indigo-600 focus:ring-indigo-600 focus:ring-offset-gray-900"
+              />
+              <label htmlFor={item.id} className="block text-sm font-medium leading-6 text-white">
+                {item.value}
+              </label>
+            </div>
+          </div>
+        ))}
+      </fieldset>
+    </div>
   )
 }

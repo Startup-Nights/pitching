@@ -4,16 +4,24 @@ enum Round {
 }
 
 class Registration {
+  company: string = '';
+  website: string = '';
+  pitching_deck: string = '';
+  problem_description: string = '';
+  problem_solution: string = '';
+  problem_approach: string = '';
+  userbase: string = '';
+  revenue: string = '';
+  advantage: string = '';
+  money_usage: string = '';
   firstname: string = '';
   lastname: string = '';
   email: string = '';
-  company: string = '';
-  website: string = '';
   linkedin: string = '';
-  pitching_deck: string = '';
+  country: string = '';
   round: string = Round.PreSeed;
-  is_raising_funds: boolean = false;
-  has_already_pitched_to_investors: boolean = false;
+  funding: string = '';
+  pitching: string = '';
   applied_on: string = '';
 
   approved: boolean = false;
