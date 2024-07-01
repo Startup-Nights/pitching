@@ -339,7 +339,7 @@ export default function Signup() {
 
             <div className="border-b border-white/10 pb-12">
               <div className="mt-10 space-y-10">
-                <Fieldset text={'Which round do you apply for?'} name={'round'} values={[{ id: 'round-seed', value: 'seed' }, { id: 'pre-seed', value: 'round-pre-seed' }]} />
+                <Fieldset text={'Which round do you apply for?'} name={'round'} values={[{ id: 'round-seed', value: 'seed' }, { id: 'round-pre-seed', value: 'pre-seed' }]} />
               </div>
             </div>
 
