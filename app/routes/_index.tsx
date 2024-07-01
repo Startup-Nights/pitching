@@ -87,8 +87,8 @@ export default function Signup() {
       <div className="px-4 sm:px-6 lg:px-8 mb-24">
         <div className='my-12 border-b border-white/10 pb-12'>
           <h2 className="text-3xl font-semibold leading-7 text-white">Sign up for the pitching competition</h2>
-          <p className="mt-4 text-sm leading-6 text-gray-400">
-            Share with the jury what makes your company unique and give a glimpse into your vision.
+          <p className="mt-4 text-md leading-6 text-gray-400">
+            At Startup Nights 2024 there will again be two pitching sessions. This year, the Swiss finals of <a className='underline font-bold italic' href="https://www.startupworldcup.io/" target="_blank">Startup Wold Cup</a> take place as part of the Startup Nights on 1st November 2024. The finalists will get the chance to pitch at the world finals in 2025 in Silicon Valley. At the world finals the Startups have the chance to win a $ 1 million investment from Pegasus Tech Ventures.
           </p>
         </div>
 
