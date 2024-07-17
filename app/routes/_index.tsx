@@ -15,7 +15,11 @@ export async function loader() {
     Key: crypto.randomUUID(),
     Bucket: Resource.PitchingSessionsBucket.name,
   });
-  const url_pitchdeck = await getSignedUrl(client, command);
+  const url_pitchdeck = await getSignedUrl(client, command, {
+    // expire in 5 day just to be sure - the maximum is one week according to 
+    // the documentation
+    expiresIn: 5 * 24 * 60 * 60
+  });
 
   const url_registration_add = Resource.AddRegistration.url
 
@@ -40,12 +44,18 @@ export default function Signup() {
     let pitchdeck = undefined
 
     if (file) {
+      // cleanup the filename to make it more obvious in the S3 bucket
+      // this also avoids accidentally overwriting stuff from other people
+      let filename = new Date().getTime() + '_' +
+        form_data.company.value.replaceAll(' ', '_').trim() + '_'
+        + file.name
+
       pitchdeck = await fetch(data.url_pitchdeck, {
         body: file,
         method: "PUT",
         headers: {
           "Content-Type": file.type,
-          "Content-Disposition": `attachment; filename="${file.name}"`,
+          "Content-Disposition": `attachment; filename="${filename}"`,
         },
       })
     }
