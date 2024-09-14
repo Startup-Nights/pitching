@@ -9,32 +9,21 @@ export default $config({
   },
   async run() {
     const bucket = new sst.aws.Bucket("PitchingSessionsBucket", {
-      public: true
+      public: true,
     });
-
-    const slackWebhookUrl = new sst.Secret('SlackWebhookUrl')
-
+    const slackWebhookUrl = new sst.Secret("SlackWebhookUrl");
     const get_registrations = new sst.aws.Function("GetRegistrations", {
       url: true,
       link: [bucket],
       handler: "src/get_registrations.handler",
     });
-
     const add_registration = new sst.aws.Function("AddRegistration", {
       url: true,
-      link: [
-        bucket,
-        slackWebhookUrl,
-      ],
+      link: [bucket, slackWebhookUrl],
       handler: "src/add_registration.handler",
     });
-
     new sst.aws.Remix("PitchingSessions", {
-      link: [
-        bucket,
-        get_registrations,
-        add_registration,
-      ],
+      link: [bucket, get_registrations, add_registration],
     });
   },
 });

@@ -2,7 +2,7 @@
 
 ```
 # local development
-bun run dev
+sst dev
 
 # update and deploy changes
 sst deploy
