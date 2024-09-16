@@ -2,10 +2,13 @@
 
 ```
 # local development
-bun run dev
+sst dev
 
 # update and deploy changes
 sst deploy
+
+# backup the s3 bucket
+aws s3 cp s3://<name-of-the-bucket/<optional-folder> . --recursive
 ```
 
 ## Resources
