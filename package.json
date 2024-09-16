@@ -23,6 +23,7 @@
     "@remix-run/serve": "^2.9.2",
     "@slack/webhook": "^7.0.2",
     "@tailwindcss/forms": "^0.5.7",
+    "@types/aws-lambda": "^8.10.145",
     "aws-lambda": "^1.0.7",
     "drizzle-kit": "^0.22.7",
     "drizzle-orm": "^0.31.2",
