@@ -2,7 +2,8 @@
 
 ```
 # local development
-sst dev
+# IMPORTANT: use different stage than with 'sst deploy'
+sst dev --stage local
 
 # update and deploy changes
 sst deploy
