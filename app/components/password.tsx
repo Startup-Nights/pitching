@@ -4,20 +4,19 @@ function classNames(...classes: any) {
   return classes.filter(Boolean).join(' ')
 }
 
-export default function Password({ setUnlocked }: any) {
+export default function Password({ setUnlocked, check, title, message }: any) {
   const [firstTry, setFirstTry] = useState(true)
-  const check = "sn24#pitching-sessions_voting"
 
   return (
     <>
       <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-sm">
           <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-100">
-            Pitching Sessions Jury Voting
+            {title}
           </h2>
 
           <p className="mt-8 text-sm text-gray-500">
-            You received the password via mail. If you lost it, please reach out to us.
+            {message}
           </p>
 
         </div>

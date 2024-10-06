@@ -138,7 +138,7 @@ export default function Vote() {
 
   if (access === 'jury' && !unlocked) {
     return (
-      <Password setUnlocked={setUnlocked} />
+      <Password setUnlocked={setUnlocked} check={'sn24#pitching-sessions_voting'} title={'Pitching Sessions Jury Voting'} message={'You received the password via mail. If you lost it, please reach out to us.'} />
     )
   }
 
