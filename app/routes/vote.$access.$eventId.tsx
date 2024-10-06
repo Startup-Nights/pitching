@@ -1,13 +1,13 @@
 import { DocumentChartBarIcon, GlobeEuropeAfricaIcon, ArrowTopRightOnSquareIcon } from '@heroicons/react/20/solid'
-import { useEffect, useState } from 'react'
-import { useNavigate, useParams } from "@remix-run/react";
+import { Suspense, useEffect, useState } from 'react'
+import { Await, useLoaderData, useNavigate, useParams } from "@remix-run/react";
 import { Transition } from '@headlessui/react'
 import { CheckCircleIcon, ExclamationTriangleIcon } from '@heroicons/react/24/outline'
 import { XMarkIcon } from '@heroicons/react/20/solid'
 import Example from '~/components/modal';
 import Password from '~/components/password';
-
-const companies = []
+import { LoaderFunctionArgs, defer } from '@remix-run/node';
+import { Resource } from 'sst';
 
 function classNames(...classes: any) {
   return classes.filter(Boolean).join(' ')
@@ -15,11 +15,9 @@ function classNames(...classes: any) {
 
 function toWebsite(data: string): string {
   var website = data.split(' ')[0]
-
   if (!website.startsWith('http')) {
     website = 'https://' + website
   }
-
   return website
 }
 
@@ -45,9 +43,17 @@ function isValidVoting(event: string, access: string): boolean {
   return true
 }
 
+export async function loader({ params }: LoaderFunctionArgs) {
+  return defer({
+    registrations: fetch(Resource.GetRegistrations.url).then(e => e.json())
+  })
+};
+
 export default function Vote() {
   const event = useParams().eventId as string
   const access = useParams().access as string
+
+  const data = useLoaderData<typeof loader>()
 
   const navigate = useNavigate()
 
@@ -62,11 +68,10 @@ export default function Vote() {
   const [loading, setLoading] = useState(false)
 
   useEffect(() => {
-    const st = localStorage.getItem("startup-nights-voting")
-
-    if (st) {
-      const voted = JSON.parse(st).voted
-      if (voted) {
+    // voting is only limited for the public
+    if (access === 'public') {
+      const data = localStorage.getItem("startup-nights-voting")
+      if (data && JSON.parse(data).voted) {
         setAlreadyVoted(true)
       }
     }
@@ -300,116 +305,120 @@ export default function Vote() {
         </div>
       </div>
 
-      <div className="px-4 sm:px-6 lg:px-8 mb-24">
-        <div className='pb-12'>
-          <fieldset>
-            <legend className="text-base font-semibold leading-6 text-gray-900">Startups</legend>
-            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-              {companies.filter(company => company.round === event).map((company, companyIdx) => (
-                <div key={companyIdx} className={classNames(
-                  "relative flex flex-1 flex-col rounded-lg bg-gray-800 rounded-lg",
-                  (selected.indexOf(company.company) !== -1) ? "ring-2 ring-blue-500 ring-offset-4 ring-offset-slate-50 dark:ring-offset-slate-900" : "ring-0",
-                )}>
-                  {(selected.indexOf(company.company) !== -1) && (
-                    <div className="absolute -top-3 -right-3 w-8 h-8 bg-blue-500 rounded-full text-black grid justify-items-center content-center">
-                      <span className='font-bold text-sm text-white'>{selected.indexOf(company.company) + 1}</span>
-                    </div>
-                  )}
+      <Suspense fallback={<div>Loading...</div>}>
+        <Await resolve={data.registrations}>
+          {(companies) => (
+            <div className="px-4 sm:px-6 lg:px-8 mb-24">
+              {console.log(companies)}
+              <div className='pb-12'>
+                <fieldset>
+                  <legend className="text-base font-semibold leading-6 text-gray-900">Startups</legend>
+                  <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+                    {companies.filter(company => company.round === event).map((company, companyIdx) => (
+                      <div key={companyIdx} className={classNames(
+                        "relative flex flex-1 flex-col rounded-lg bg-gray-800 rounded-lg",
+                        (selected.indexOf(company.company) !== -1) ? "ring-2 ring-blue-500 ring-offset-4 ring-offset-slate-50 dark:ring-offset-slate-900" : "ring-0",
+                      )}>
+                        {(selected.indexOf(company.company) !== -1) && (
+                          <div className="absolute -top-3 -right-3 w-8 h-8 bg-blue-500 rounded-full text-black grid justify-items-center content-center">
+                            <span className='font-bold text-sm text-white'>{selected.indexOf(company.company) + 1}</span>
+                          </div>
+                        )}
 
-                  <div className='relative flex flex-1 flex-col rounded-lg divide-y-2 divide-gray-600'>
-                    <label htmlFor={`company-${companyIdx}`} className="text-center select-none text-gray-200 text-sm font-semibold">
-                      <div className="min-w-0 flex-1 text-sm leading-6 py-4">
-                        {company.company}
-                      </div>
-                    </label>
-                    <div className="-mt-px flex divide-x divide-gray-200">
-                      <div className="flex w-0 flex-1">
-                        <a
-                          href={toWebsite(company.website)}
-                          className="relative inline-flex w-0 flex-1 items-center justify-center gap-x-3 rounded-br-lg border border-transparent py-4 text-sm font-semibold text-gray-400"
-                          target='_blank'
-                        >
-                          <GlobeEuropeAfricaIcon aria-hidden="true" className="h-5 w-5 text-gray-400" />
-                          Website
-                        </a>
-                      </div>
-                    </div>
-                    {(access === 'jury') && (
-                      <>
-                        {(company.pitching_deck) && (
+                        <div className='relative flex flex-1 flex-col rounded-lg divide-y-2 divide-gray-600'>
+                          <label htmlFor={`company-${companyIdx}`} className="text-center select-none text-gray-200 text-sm font-semibold">
+                            <div className="min-w-0 flex-1 text-sm leading-6 py-4">
+                              {company.company}
+                            </div>
+                          </label>
                           <div className="-mt-px flex divide-x divide-gray-200">
                             <div className="flex w-0 flex-1">
                               <a
-                                href={company.pitching_deck}
+                                href={toWebsite(company.website)}
                                 className="relative inline-flex w-0 flex-1 items-center justify-center gap-x-3 rounded-br-lg border border-transparent py-4 text-sm font-semibold text-gray-400"
                                 target='_blank'
                               >
-                                <DocumentChartBarIcon aria-hidden="true" className="h-5 w-5 text-gray-400" />
-                                Pitchdeck
+                                <GlobeEuropeAfricaIcon aria-hidden="true" className="h-5 w-5 text-gray-400" />
+                                Website
                               </a>
                             </div>
                           </div>
-                        )}
-                        {(!company.pitching_deck) && (
-                          <div className="-mt-px flex divide-x divide-gray-200">
-                            <div className="flex w-0 flex-1">
-                              <p className="relative inline-flex w-0 flex-1 items-center justify-center gap-x-3 rounded-br-lg border border-transparent py-4 text-sm font-semibold text-gray-400 italic">
-                                <DocumentChartBarIcon aria-hidden="true" className="h-5 w-5 text-gray-400" />
-                                No pitchdeck provided
-                              </p>
-                            </div>
-                          </div>
-                        )}
+                          {(access === 'jury') && (
+                            <>
+                              {(company.pitching_deck) && (
+                                <div className="-mt-px flex divide-x divide-gray-200">
+                                  <div className="flex w-0 flex-1">
+                                    <a
+                                      href={company.pitching_deck}
+                                      className="relative inline-flex w-0 flex-1 items-center justify-center gap-x-3 rounded-br-lg border border-transparent py-4 text-sm font-semibold text-gray-400"
+                                      target='_blank'
+                                    >
+                                      <DocumentChartBarIcon aria-hidden="true" className="h-5 w-5 text-gray-400" />
+                                      Pitchdeck
+                                    </a>
+                                  </div>
+                                </div>
+                              )}
+                              {(!company.pitching_deck) && (
+                                <div className="-mt-px flex divide-x divide-gray-200">
+                                  <div className="flex w-0 flex-1">
+                                    <p className="relative inline-flex w-0 flex-1 items-center justify-center gap-x-3 rounded-br-lg border border-transparent py-4 text-sm font-semibold text-gray-400 italic">
+                                      No pitchdeck provided
+                                    </p>
+                                  </div>
+                                </div>
+                              )}
 
-                      </>
-                    )}
-                    {access === 'jury' && (
-                      <div className="-mt-px flex divide-x divide-gray-200">
-                        <div className="flex w-0 flex-1">
-                          <button
-                            className="relative inline-flex w-0 flex-1 items-center justify-center gap-x-3 rounded-br-lg border border-transparent py-4 text-sm font-semibold text-gray-400"
-                            onClick={() => {
-                              setClickedStartup(company)
-                              setModalOpen(true)
-                            }}
-                          >
-                            <ArrowTopRightOnSquareIcon aria-hidden="true" className="h-5 w-5 text-gray-400" />
-                            More information
-                          </button>
+                            </>
+                          )}
+                          {access === 'jury' && (
+                            <div className="-mt-px flex divide-x divide-gray-200">
+                              <div className="flex w-0 flex-1">
+                                <button
+                                  className="relative inline-flex w-0 flex-1 items-center justify-center gap-x-3 rounded-br-lg border border-transparent py-4 text-sm font-semibold text-gray-400"
+                                  onClick={() => {
+                                    setClickedStartup(company)
+                                    setModalOpen(true)
+                                  }}
+                                >
+                                  <ArrowTopRightOnSquareIcon aria-hidden="true" className="h-5 w-5 text-gray-400" />
+                                  More information
+                                </button>
+                              </div>
+                            </div>
+                          )}
+                          <div className="ml-3 flex h-6 items-center hidden">
+                            <input
+                              id={`company-${companyIdx}`}
+                              name={`company-${companyIdx}`}
+                              type="checkbox"
+                              checked={selected.indexOf(company.company) !== -1}
+                              className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
+                              onChange={(e) => {
+                                const idx = selected.indexOf(company.company)
+                                if ((e as any).target.checked) {
+                                  if (idx == -1) {
+                                    selected.push(company.company)
+                                  }
+                                } else {
+                                  if (idx > -1) {
+                                    selected.splice(idx, 1)
+                                  }
+                                }
+                                setSelected([...selected])
+                              }}
+                            />
+                          </div>
                         </div>
                       </div>
-                    )}
-                    <div className="ml-3 flex h-6 items-center hidden">
-                      <input
-                        id={`company-${companyIdx}`}
-                        name={`company-${companyIdx}`}
-                        type="checkbox"
-                        checked={selected.indexOf(company.company) !== -1}
-                        className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
-                        onChange={(e) => {
-                          console.log(company.company + ': is set: ' + (e as any).target.checked)
-                          const idx = selected.indexOf(company.company)
-                          if ((e as any).target.checked) {
-                            if (idx == -1) {
-                              selected.push(company.company)
-                            }
-                          } else {
-                            if (idx > -1) {
-                              selected.splice(idx, 1)
-                            }
-                          }
-                          setSelected([...selected])
-                          console.log(selected)
-                        }}
-                      />
-                    </div>
+                    ))}
                   </div>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-        </div>
-      </div >
+                </fieldset>
+              </div>
+            </div >
+          )}
+        </Await>
+      </Suspense>
     </div >
   )
 }
