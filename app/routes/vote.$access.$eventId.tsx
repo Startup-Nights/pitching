@@ -1,5 +1,5 @@
-import { DocumentChartBarIcon, GlobeEuropeAfricaIcon } from '@heroicons/react/20/solid'
-import { useState } from 'react'
+import { DocumentChartBarIcon, GlobeEuropeAfricaIcon, ArrowTopRightOnSquareIcon } from '@heroicons/react/20/solid'
+import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from "@remix-run/react";
 import { Transition } from '@headlessui/react'
 import { CheckCircleIcon, ExclamationTriangleIcon } from '@heroicons/react/24/outline'
@@ -51,6 +51,7 @@ export default function Vote() {
 
   const navigate = useNavigate()
 
+  const [alreadyVoted, setAlreadyVoted] = useState(false)
   const [selected, setSelected] = useState([])
   const [showSuccess, setShowSucces] = useState(false)
   const [showError, setShowError] = useState(false)
@@ -59,6 +60,17 @@ export default function Vote() {
   const [clickedStartup, setClickedStartup] = useState("")
 
   const [loading, setLoading] = useState(false)
+
+  useEffect(() => {
+    const st = localStorage.getItem("startup-nights-voting")
+
+    if (st) {
+      const voted = JSON.parse(st).voted
+      if (voted) {
+        setAlreadyVoted(true)
+      }
+    }
+  }, [])
 
   const handleSubmit = async (e: any) => {
     e.preventDefault()
@@ -76,6 +88,7 @@ export default function Vote() {
         id: '1F4r2nCsQUIE38qOJaBzuyqHOtgVc3KshhucyOQI6zBU',
         range: 'A:I',
         data: [
+          new Date().toString(),
           access,
           event,
           data.name.value,
@@ -92,6 +105,7 @@ export default function Vote() {
     } else {
 
       if (access === 'public') {
+        localStorage.setItem("startup-nights-voting", JSON.stringify({ "voted": true }))
         navigate(`/success_voting/${selected[0]}`)
       } else {
         setShowSucces(true)
@@ -192,34 +206,30 @@ export default function Vote() {
 
       <div className="flex flex-col items-start justify-between gap-x-8 gap-y-4 bg-gray-700/10 px-4 py-4 sm:flex-row sm:items-center sm:px-6 lg:px-8">
         <div className="flex min-h-full flex-1 flex-col justify-center px-6 pb-12 lg:px-8">
-          <div className="sm:mx-auto sm:w-full sm:max-w-xl">
-            <div className="flex items-center gap-x-3">
-              <h1 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-100">
-                <span className="font-semibold text-white">Voting</span>
-              </h1>
+          <div className='grid xl:grid-cols-2 mt-10 space-y-10 xl:space-y-0 xl:space-x-20 max-w-6xl'>
+
+            <div className="max-w-xl">
+              <div className="flex items-center gap-x-3">
+                <h1 className="text-center text-2xl font-bold leading-9 tracking-tight text-gray-100">
+                  <span className="font-semibold text-white">Voting</span>
+                </h1>
+              </div>
+              <p className="mt-4 text-sm leading-5 text-gray-400">How the voting works:</p>
+              <ul className='text-gray-400 list-disc ml-4 text-sm mt-4 mt-4 leading-5 space-y-2'>
+                <li>each startup has a card with their logo with additional information like website or similar</li>
+                <li>by clicking on a logo or name, the startup is selected (note that the order is important - first startup gets the most points)</li>
+                <li>when you have selected 5 startups, you can submit the voting by entering your name and email</li>
+              </ul>
             </div>
-            <p className="mt-4 text-sm leading-5 text-gray-400">How the voting works:</p>
-            <ul className='text-gray-400 list-disc ml-4 text-sm mt-4 mt-4'>
-              <li>each startup has a card with their logo with additional information like website or similar</li>
-              <li>by clicking on a logo or name, the startup is selected (note that the order is important - first startup gets the most points)</li>
-              <li>when you have selected 5 startups, you can submit the voting by entering your name and email</li>
-            </ul>
-            <div className='mt-8'>
-              <p className="text-sm leading-5 text-gray-400">Selected startups (<span className={classNames(selected.length === 5 ? 'text-green-500' : 'text-red-500', 'font-bold')}>{selected.length}/5</span>) :</p>
-              <ol className='ml-4 list-decimal text-gray-400 text-sm'>
-                {selected.length > 0 && selected.map((item, idx) => (
-                  <li key={`company-list-item-${idx}`}>{item}</li>
-                ))}
-                {Array(Math.max(5 - selected.length, 0)).fill(0).map((item, idx) => (
-                  <li className='' key={`company-list-item-${idx}`}></li>
-                ))}
-              </ol>
-            </div>
-            <div className='mt-8'>
+
+            <div className="max-w-xl">
               <h1 className="flex gap-x-3 text-base leading-7">
                 <span className="font-semibold text-white">Submission</span>
               </h1>
-              <form onSubmit={handleSubmit} method="POST" className="space-y-4 mt-2">
+
+              <p className="mt-2 text-sm leading-5 text-gray-400">Startups selected: <span className={classNames(selected.length === 5 ? 'text-green-500' : 'text-red-500', 'font-bold')}>{selected.length}/5</span></p>
+
+              <form onSubmit={handleSubmit} method="POST" className="space-y-4 mt-4">
                 <div>
                   <label htmlFor="name" className="block text-sm font-medium leading-6 text-white hidden">
                     Name
@@ -253,14 +263,22 @@ export default function Vote() {
                   </div>
                 </div>
 
+                {alreadyVoted && (
+                  <div>
+                    <p className="mt-2 text-sm leading-5 text-red-400 italic">
+                      A vote from this device is already registered. If you think this was a mistake, please get in touch with us.
+                    </p>
+                  </div>
+                )}
+
                 <div>
                   <button
                     type="submit"
                     className={classNames(
                       "flex w-full justify-center rounded-md px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500",
-                      selected.length === 5 ? 'bg-blue-600 hover:bg-blue-500' : 'bg-gray-500 hover:bg-gray-400',
+                      selected.length === 5 && !alreadyVoted ? 'bg-blue-600 hover:bg-blue-500' : 'bg-gray-500 hover:bg-gray-400',
                     )}
-                    disabled={selected.length !== 5}
+                    disabled={selected.length !== 5 || alreadyVoted}
                   >
                     {!loading && (
                       <span>Submit selection</span>
@@ -316,19 +334,34 @@ export default function Vote() {
                         </a>
                       </div>
                     </div>
-                    {(company.pitching_deck) && (access === 'jury') && (
-                      <div className="-mt-px flex divide-x divide-gray-200">
-                        <div className="flex w-0 flex-1">
-                          <a
-                            href={company.pitching_deck}
-                            className="relative inline-flex w-0 flex-1 items-center justify-center gap-x-3 rounded-br-lg border border-transparent py-4 text-sm font-semibold text-gray-400"
-                            target='_blank'
-                          >
-                            <DocumentChartBarIcon aria-hidden="true" className="h-5 w-5 text-gray-400" />
-                            Pitchdeck
-                          </a>
-                        </div>
-                      </div>
+                    {(access === 'jury') && (
+                      <>
+                        {(company.pitching_deck) && (
+                          <div className="-mt-px flex divide-x divide-gray-200">
+                            <div className="flex w-0 flex-1">
+                              <a
+                                href={company.pitching_deck}
+                                className="relative inline-flex w-0 flex-1 items-center justify-center gap-x-3 rounded-br-lg border border-transparent py-4 text-sm font-semibold text-gray-400"
+                                target='_blank'
+                              >
+                                <DocumentChartBarIcon aria-hidden="true" className="h-5 w-5 text-gray-400" />
+                                Pitchdeck
+                              </a>
+                            </div>
+                          </div>
+                        )}
+                        {(!company.pitching_deck) && (
+                          <div className="-mt-px flex divide-x divide-gray-200">
+                            <div className="flex w-0 flex-1">
+                              <p className="relative inline-flex w-0 flex-1 items-center justify-center gap-x-3 rounded-br-lg border border-transparent py-4 text-sm font-semibold text-gray-400 italic">
+                                <DocumentChartBarIcon aria-hidden="true" className="h-5 w-5 text-gray-400" />
+                                No pitchdeck provided
+                              </p>
+                            </div>
+                          </div>
+                        )}
+
+                      </>
                     )}
                     {access === 'jury' && (
                       <div className="-mt-px flex divide-x divide-gray-200">
@@ -340,7 +373,7 @@ export default function Vote() {
                               setModalOpen(true)
                             }}
                           >
-                            <GlobeEuropeAfricaIcon aria-hidden="true" className="h-5 w-5 text-gray-400" />
+                            <ArrowTopRightOnSquareIcon aria-hidden="true" className="h-5 w-5 text-gray-400" />
                             More information
                           </button>
                         </div>
