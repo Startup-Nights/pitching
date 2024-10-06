@@ -1,5 +1,4 @@
 import {
-  Link,
   Links,
   Meta,
   NavLink,
@@ -15,6 +14,7 @@ import {
   Bars3Icon,
   ClipboardDocumentListIcon,
   XMarkIcon,
+  RocketLaunchIcon,
 } from '@heroicons/react/24/outline'
 
 export const links: LinksFunction = () => [
@@ -27,6 +27,7 @@ function classNames(...classes: string[]) {
 
 const navigation = [
   { name: 'Signup', href: '/', icon: ClipboardDocumentListIcon, disabled: false },
+  { name: 'Voting', href: '/vote/public/pre-seed', icon: RocketLaunchIcon, disabled: false },
 ]
 const events = [
   { id: 1, name: 'Seed', href: '/events/seed', initial: 'S', current: false },
