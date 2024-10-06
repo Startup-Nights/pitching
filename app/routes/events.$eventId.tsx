@@ -1,12 +1,12 @@
 import { Resource } from "sst"
-import { Await, defer, json, useLoaderData } from "@remix-run/react";
+import { Await, defer, useLoaderData } from "@remix-run/react";
 import { Suspense } from "react";
 import { LoaderFunctionArgs } from "@remix-run/node";
 
 export async function loader({ params }: LoaderFunctionArgs) {
   return defer({
     name: params.eventId,
-    registrations: (await fetch(Resource.GetRegistrations.url)).json()
+    registrations: fetch(Resource.GetRegistrations.url).then(e => e.json())
   })
 };
 
