@@ -5,6 +5,7 @@ import { Transition } from '@headlessui/react'
 import { CheckCircleIcon, ExclamationTriangleIcon } from '@heroicons/react/24/outline'
 import { XMarkIcon } from '@heroicons/react/20/solid'
 import Example from '~/components/modal';
+import Password from '~/components/password';
 
 const companies = []
 
@@ -59,21 +60,6 @@ export default function Vote() {
 
   const [loading, setLoading] = useState(false)
 
-  if (!isValidVoting(event, access)) {
-    return (<div className="xl:pl-72 max-w-full">
-      <div className="flex flex-col items-start justify-between gap-x-8 gap-y-4 bg-gray-700/10 px-4 py-4 sm:flex-row sm:items-center sm:px-6 lg:px-8">
-        <div>
-          <div className="flex items-center gap-x-3">
-            <h1 className="flex gap-x-3 text-base leading-7">
-              <span className="font-semibold text-white">Vote</span>
-            </h1>
-          </div>
-          <p className="mt-2 text-xs leading-6 text-gray-400">Nothing to see here. Try out the link we sent you or reach out to us for help.</p>
-        </div>
-      </div>
-    </div>)
-  }
-
   const handleSubmit = async (e: any) => {
     e.preventDefault()
     const data = e.target
@@ -112,6 +98,29 @@ export default function Vote() {
         setSelected([])
       }
     }
+  }
+
+  if (!isValidVoting(event, access)) {
+    return (<div className="xl:pl-72 max-w-full">
+      <div className="flex flex-col items-start justify-between gap-x-8 gap-y-4 bg-gray-700/10 px-4 py-4 sm:flex-row sm:items-center sm:px-6 lg:px-8">
+        <div>
+          <div className="flex items-center gap-x-3">
+            <h1 className="flex gap-x-3 text-base leading-7">
+              <span className="font-semibold text-white">Vote</span>
+            </h1>
+          </div>
+          <p className="mt-2 text-sm leading-6 text-gray-400">Nothing to see here. Try out the link we sent you or reach out to us for help.</p>
+        </div>
+      </div>
+    </div>)
+  }
+
+  const [unlocked, setUnlocked] = useState(false)
+
+  if (access === 'jury' && !unlocked) {
+    return (
+      <Password setUnlocked={setUnlocked} />
+    )
   }
 
   return (
@@ -182,86 +191,93 @@ export default function Vote() {
       <Example open={modalOpen} setOpen={setModalOpen} startup={clickedStartup} />
 
       <div className="flex flex-col items-start justify-between gap-x-8 gap-y-4 bg-gray-700/10 px-4 py-4 sm:flex-row sm:items-center sm:px-6 lg:px-8">
-        <div className='max-w-2xl'>
-          <div className="flex items-center gap-x-3">
-            <h1 className="flex gap-x-3 text-base leading-7">
-              <span className="font-semibold text-white">Vote</span>
-            </h1>
-          </div>
-          <p className="mt-2 text-xs leading-5 text-gray-400">How the voting works: each startup has a card with their logo and additional information like website. By clicking on the name or logo, you select the startup. Note that the order in which you select the startup is important! The first startup gets more point (is deemed more important) than the later ones. After you have selected (exactly) 5 startups, you can submit the voting.</p>
-          <div className='mt-2'>
-            <p className="text-xs leading-5 text-gray-400">Selected startups (<span className={classNames(selected.length === 5 ? 'text-green-400' : 'text-red-400', 'font-bold')}>{selected.length}/5</span>) :</p>
-            <ol className='ml-4 list-decimal text-gray-400 text-xs'>
-              {selected.length > 0 && selected.map((item, idx) => (
-                <li key={`company-list-item-${idx}`}>{item}</li>
-              ))}
-              {Array(Math.max(5 - selected.length, 0)).fill(0).map((item, idx) => (
-                <li className='' key={`company-list-item-${idx}`}></li>
-              ))}
-            </ol>
-          </div>
-          <div className='mt-4'>
-            <h1 className="flex gap-x-3 text-base leading-7">
-              <span className="font-semibold text-white">Submission</span>
-            </h1>
-            <form onSubmit={handleSubmit} method="POST" className="space-y-4 mt-2">
-              <div>
-                <label htmlFor="name" className="block text-sm font-medium leading-6 text-white hidden">
-                  Name
-                </label>
-                <div className="">
-                  <input
-                    id="name"
-                    name="name"
-                    placeholder='Max Muster'
-                    type="text"
-                    required
-                    autoComplete="name"
-                    className="block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6"
-                  />
+        <div className="flex min-h-full flex-1 flex-col justify-center px-6 pb-12 lg:px-8">
+          <div className="sm:mx-auto sm:w-full sm:max-w-xl">
+            <div className="flex items-center gap-x-3">
+              <h1 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-100">
+                <span className="font-semibold text-white">Voting</span>
+              </h1>
+            </div>
+            <p className="mt-4 text-sm leading-5 text-gray-400">How the voting works:</p>
+            <ul className='text-gray-400 list-disc ml-4 text-sm mt-4 mt-4'>
+              <li>each startup has a card with their logo with additional information like website or similar</li>
+              <li>by clicking on a logo or name, the startup is selected (note that the order is important - first startup gets the most points)</li>
+              <li>when you have selected 5 startups, you can submit the voting by entering your name and email</li>
+            </ul>
+            <div className='mt-8'>
+              <p className="text-sm leading-5 text-gray-400">Selected startups (<span className={classNames(selected.length === 5 ? 'text-green-500' : 'text-red-500', 'font-bold')}>{selected.length}/5</span>) :</p>
+              <ol className='ml-4 list-decimal text-gray-400 text-sm'>
+                {selected.length > 0 && selected.map((item, idx) => (
+                  <li key={`company-list-item-${idx}`}>{item}</li>
+                ))}
+                {Array(Math.max(5 - selected.length, 0)).fill(0).map((item, idx) => (
+                  <li className='' key={`company-list-item-${idx}`}></li>
+                ))}
+              </ol>
+            </div>
+            <div className='mt-8'>
+              <h1 className="flex gap-x-3 text-base leading-7">
+                <span className="font-semibold text-white">Submission</span>
+              </h1>
+              <form onSubmit={handleSubmit} method="POST" className="space-y-4 mt-2">
+                <div>
+                  <label htmlFor="name" className="block text-sm font-medium leading-6 text-white hidden">
+                    Name
+                  </label>
+                  <div className="">
+                    <input
+                      id="name"
+                      name="name"
+                      placeholder='Max Muster'
+                      type="text"
+                      required
+                      autoComplete="name"
+                      className="block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6"
+                    />
+                  </div>
                 </div>
-              </div>
-              <div>
-                <label htmlFor="email" className="block text-sm font-medium leading-6 text-white hidden">
-                  Email address
-                </label>
-                <div className="">
-                  <input
-                    id="email"
-                    name="email"
-                    placeholder='max@muster.ch'
-                    type="email"
-                    required
-                    autoComplete="email"
-                    className="block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6"
-                  />
+                <div>
+                  <label htmlFor="email" className="block text-sm font-medium leading-6 text-white hidden">
+                    Email address
+                  </label>
+                  <div className="">
+                    <input
+                      id="email"
+                      name="email"
+                      placeholder='max@muster.ch'
+                      type="email"
+                      required
+                      autoComplete="email"
+                      className="block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6"
+                    />
+                  </div>
                 </div>
-              </div>
 
-              <div>
-                <button
-                  type="submit"
-                  className={classNames(
-                    "flex w-full justify-center rounded-md px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500",
-                    selected.length === 5 ? 'bg-purple-500 hover:bg-purple-400' : 'bg-gray-500 hover:bg-gray-400',
-                  )}
-                  disabled={selected.length !== 5}
-                >
-                  {!loading && (
-                    <span>Submit selection</span>
-                  )}
-                  {loading && (
-                    <>
-                      <span>Submitting...</span>
-                      <svg className="animate-spin ml-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                      </svg>
-                    </>
-                  )}
-                </button>
-              </div>
-            </form>
+                <div>
+                  <button
+                    type="submit"
+                    className={classNames(
+                      "flex w-full justify-center rounded-md px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500",
+                      selected.length === 5 ? 'bg-blue-600 hover:bg-blue-500' : 'bg-gray-500 hover:bg-gray-400',
+                    )}
+                    disabled={selected.length !== 5}
+                  >
+                    {!loading && (
+                      <span>Submit selection</span>
+                    )}
+                    {loading && (
+                      <>
+                        <span>Submitting...</span>
+                        <svg className="animate-spin ml-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                      </>
+                    )}
+                  </button>
+                </div>
+              </form>
+            </div>
           </div>
         </div>
       </div>
@@ -274,10 +290,10 @@ export default function Vote() {
               {companies.filter(company => company.round === event).map((company, companyIdx) => (
                 <div key={companyIdx} className={classNames(
                   "relative flex flex-1 flex-col rounded-lg bg-gray-800 rounded-lg",
-                  (selected.indexOf(company.company) !== -1) ? "ring-2 ring-purple-500 ring-offset-4 ring-offset-slate-50 dark:ring-offset-slate-900" : "ring-0",
+                  (selected.indexOf(company.company) !== -1) ? "ring-2 ring-blue-500 ring-offset-4 ring-offset-slate-50 dark:ring-offset-slate-900" : "ring-0",
                 )}>
                   {(selected.indexOf(company.company) !== -1) && (
-                    <div className="absolute -top-3 -right-3 w-8 h-8 bg-purple-500 rounded-full text-black grid justify-items-center content-center">
+                    <div className="absolute -top-3 -right-3 w-8 h-8 bg-blue-500 rounded-full text-black grid justify-items-center content-center">
                       <span className='font-bold text-sm text-white'>{selected.indexOf(company.company) + 1}</span>
                     </div>
                   )}

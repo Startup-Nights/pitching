@@ -13,7 +13,7 @@ export default function Signup() {
           </p>
 
           <p className="mt-4 text-sm leading-6 text-gray-400">
-            Don't worry though if you haven't got a ticket yet - we got you! Use the discount code <span className="font-bold italic">thx-for-your-vote_PC15</span> when registering as a small thank you from our side.
+            Don't worry though if you haven't got a ticket yet - we got you! Use the discount code <span className="font-bold italic">thx-for-your-vote_PC15</span> when registering as a small token of appreciation.
           </p>
 
           <p className="mt-4 text-sm leading-6 text-gray-400">
