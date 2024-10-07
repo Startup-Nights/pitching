@@ -32,15 +32,7 @@ const rounds = [
 ]
 
 function isValidVoting(event: string, access: string): boolean {
-  if (votings.indexOf(access) === -1) {
-    return false
-  } else if (rounds.indexOf(event) === -1) {
-    return false
-  } else if (event === "seed" && access == "public") {
-    return false
-  }
-
-  return true
+  return ((access === votings[0]) || (access === votings[0])) && ((event === rounds[0]) || (event === rounds[1]))
 }
 
 export async function loader({ params }: LoaderFunctionArgs) {
@@ -53,11 +45,13 @@ export default function Vote() {
   const event = useParams().eventId as string
   const access = useParams().access as string
 
+  const numberOfStartups = access === 'jury' ? 5 : 1
+
   const data = useLoaderData<typeof loader>()
 
   const navigate = useNavigate()
 
-  const [alreadyVoted, setAlreadyVoted] = useState(false)
+  const [alreadyVoted, setAlreadyVoted] = useState({ "seed": false, "pre-seed": false })
   const [selected, setSelected] = useState([])
   const [showSuccess, setShowSucces] = useState(false)
   const [showError, setShowError] = useState(false)
@@ -71,8 +65,8 @@ export default function Vote() {
     // voting is only limited for the public
     if (access === 'public') {
       const data = localStorage.getItem("startup-nights-voting")
-      if (data && JSON.parse(data).voted) {
-        setAlreadyVoted(true)
+      if (data) {
+        setAlreadyVoted({ ...alreadyVoted, ...JSON.parse(data) })
       }
     }
   }, [])
@@ -110,7 +104,8 @@ export default function Vote() {
     } else {
 
       if (access === 'public') {
-        localStorage.setItem("startup-nights-voting", JSON.stringify({ "voted": true }))
+        alreadyVoted[`${event}`] = { "voted": true }
+        localStorage.setItem("startup-nights-voting", JSON.stringify(alreadyVoted))
         navigate(`/success_voting/${selected[0]}`)
       } else {
         setShowSucces(true)
@@ -216,14 +211,14 @@ export default function Vote() {
             <div className="max-w-xl">
               <div className="flex items-center gap-x-3">
                 <h1 className="text-center text-2xl font-bold leading-9 tracking-tight text-gray-100">
-                  <span className="font-semibold text-white">Voting</span>
+                  <span className="font-semibold text-white">{access.charAt(0).toUpperCase() + access.slice(1)} Voting - {event.charAt(0).toUpperCase() + event.slice(1)} Round</span>
                 </h1>
               </div>
               <p className="mt-4 text-sm leading-5 text-gray-400">How the voting works:</p>
               <ul className='text-gray-400 list-disc ml-4 text-sm mt-4 mt-4 leading-5 space-y-2'>
                 <li>each startup has a card with their logo with additional information like website or similar</li>
                 <li>by clicking on a logo or name, the startup is selected (note that the order is important - first startup gets the most points)</li>
-                <li>when you have selected 5 startups, you can submit the voting by entering your name and email</li>
+                <li>when you have selected {numberOfStartups} startups, you can submit the voting by entering your name and email</li>
               </ul>
             </div>
 
@@ -232,7 +227,7 @@ export default function Vote() {
                 <span className="font-semibold text-white">Submission</span>
               </h1>
 
-              <p className="mt-2 text-sm leading-5 text-gray-400">Startups selected: <span className={classNames(selected.length === 5 ? 'text-green-500' : 'text-red-500', 'font-bold')}>{selected.length}/5</span></p>
+              <p className="mt-2 text-sm leading-5 text-gray-400">Startups selected: <span className={classNames(selected.length === numberOfStartups ? 'text-green-500' : 'text-red-500', 'font-bold')}>{selected.length}/{numberOfStartups}</span></p>
 
               <form onSubmit={handleSubmit} method="POST" className="space-y-4 mt-4">
                 <div>
@@ -268,7 +263,7 @@ export default function Vote() {
                   </div>
                 </div>
 
-                {alreadyVoted && (
+                {alreadyVoted[`${event}`]?.voted && (
                   <div>
                     <p className="mt-2 text-sm leading-5 text-red-400 italic">
                       A vote from this device is already registered. If you think this was a mistake, please get in touch with us.
@@ -281,9 +276,9 @@ export default function Vote() {
                     type="submit"
                     className={classNames(
                       "flex w-full justify-center rounded-md px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500",
-                      selected.length === 5 && !alreadyVoted ? 'bg-blue-600 hover:bg-blue-500' : 'bg-gray-500 hover:bg-gray-400',
+                      selected.length === numberOfStartups && !alreadyVoted[`${event}`]?.voted ? 'bg-blue-600 hover:bg-blue-500' : 'bg-gray-500 hover:bg-gray-400',
                     )}
-                    disabled={selected.length !== 5 || alreadyVoted}
+                    disabled={selected.length !== numberOfStartups || alreadyVoted[`${event}`]?.voted}
                   >
                     {!loading && (
                       <span>Submit selection</span>
@@ -309,7 +304,6 @@ export default function Vote() {
         <Await resolve={data.registrations}>
           {(companies) => (
             <div className="px-4 sm:px-6 lg:px-8 mb-24">
-              {console.log(companies)}
               <div className='pb-12'>
                 <fieldset>
                   <legend className="text-base font-semibold leading-6 text-gray-900">Startups</legend>
