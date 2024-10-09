@@ -81,7 +81,8 @@ export default function Signup() {
         funding: form_data.funding.value,
         pitching: form_data.pitching.value,
         applied_on: new Date().toDateString(),
-        approved: false
+        approved: false,
+        logo: ''
       }),
       method: "PUT",
     })
