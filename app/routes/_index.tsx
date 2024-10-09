@@ -94,7 +94,7 @@ export default function Signup() {
   }
 
   return (
-    <div className="xl:pl-72 max-w-6xl">
+    <div className="xl:pl-72 max-w-6xl pb-4">
       <div className="px-4 sm:px-6 lg:px-8 mb-24">
         <div className='my-12 border-b border-white/10 pb-12'>
           <h2 className="text-3xl font-semibold leading-7 text-white">Sign up for the pitching competition</h2>
@@ -121,7 +121,7 @@ export default function Signup() {
                       id="first_name"
                       required
                       autoComplete="given-name"
-                      className="block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6"
+                      className="block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-blue-500 sm:text-sm sm:leading-6"
                     />
                   </div>
                 </div>
@@ -137,7 +137,7 @@ export default function Signup() {
                       id="last_name"
                       required
                       autoComplete="family-name"
-                      className="block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6"
+                      className="block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-blue-500 sm:text-sm sm:leading-6"
                     />
                   </div>
                 </div>
@@ -153,7 +153,7 @@ export default function Signup() {
                       name="email"
                       type="email"
                       autoComplete="email"
-                      className="block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6"
+                      className="block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-blue-500 sm:text-sm sm:leading-6"
                     />
                   </div>
                 </div>
@@ -168,7 +168,7 @@ export default function Signup() {
                       required
                       name="linkedin"
                       type="text"
-                      className="block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6"
+                      className="block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-blue-500 sm:text-sm sm:leading-6"
                     />
                   </div>
                 </div>
@@ -183,7 +183,7 @@ export default function Signup() {
                       required
                       name="country"
                       type="text"
-                      className="block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6"
+                      className="block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-blue-500 sm:text-sm sm:leading-6"
                     />
                   </div>
                 </div>
@@ -205,7 +205,7 @@ export default function Signup() {
                       name="company"
                       id="company"
                       required
-                      className="block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6"
+                      className="block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-blue-500 sm:text-sm sm:leading-6"
                     />
                   </div>
                 </div>
@@ -220,7 +220,7 @@ export default function Signup() {
                       name="website"
                       id="website"
                       required
-                      className="block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6"
+                      className="block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-blue-500 sm:text-sm sm:leading-6"
                     />
                   </div>
                 </div>
@@ -235,7 +235,7 @@ export default function Signup() {
                       <div className="mt-4 flex text-sm leading-6 text-gray-400">
                         <label
                           htmlFor="pitchdeck"
-                          className="relative cursor-pointer rounded-md bg-gray-900 font-semibold text-white focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2 focus-within:ring-offset-gray-900 hover:text-indigo-500"
+                          className="relative cursor-pointer rounded-md bg-gray-900 font-semibold text-white focus-within:outline-none focus-within:ring-2 focus-within:ring-blue-600 focus-within:ring-offset-2 focus-within:ring-offset-gray-900 hover:text-blue-500"
                         >
                           <span>{fileName != '' ? fileName : 'Select file to upload'}</span>
                           <input id="pitchdeck" name="pitchdeck" type="file" className="sr-only" onChange={(e) => setFileName(e.target.files ? e.target.files[0].name : '')} />
@@ -256,7 +256,7 @@ export default function Signup() {
                       id="problem_description"
                       required
                       name="problem_description"
-                      className="block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6"
+                      className="block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-blue-500 sm:text-sm sm:leading-6"
                     />
                   </div>
                 </div>
@@ -270,7 +270,7 @@ export default function Signup() {
                       id="problem_solution"
                       required
                       name="problem_solution"
-                      className="block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6"
+                      className="block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-blue-500 sm:text-sm sm:leading-6"
                     />
                   </div>
                 </div>
@@ -284,7 +284,7 @@ export default function Signup() {
                       id="problem_approach"
                       required
                       name="problem_approach"
-                      className="block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6"
+                      className="block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-blue-500 sm:text-sm sm:leading-6"
                     />
                   </div>
                 </div>
@@ -298,7 +298,7 @@ export default function Signup() {
                       id="userbase"
                       required
                       name="userbase"
-                      className="block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6"
+                      className="block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-blue-500 sm:text-sm sm:leading-6"
                     />
                   </div>
                 </div>
@@ -312,7 +312,7 @@ export default function Signup() {
                       id="revenue"
                       required
                       name="revenue"
-                      className="block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6"
+                      className="block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-blue-500 sm:text-sm sm:leading-6"
                     />
                   </div>
                 </div>
@@ -326,7 +326,7 @@ export default function Signup() {
                       id="advantage"
                       required
                       name="advantage"
-                      className="block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6"
+                      className="block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-blue-500 sm:text-sm sm:leading-6"
                     />
                   </div>
                 </div>
@@ -340,7 +340,7 @@ export default function Signup() {
                       id="money_usage"
                       required
                       name="money_usage"
-                      className="block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6"
+                      className="block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-blue-500 sm:text-sm sm:leading-6"
                     />
                   </div>
                 </div>
@@ -378,7 +378,7 @@ export default function Signup() {
           <div className="mt-6 flex items-center justify-end gap-x-6">
             <button
               type="submit"
-              className="flex items-center rounded-md bg-indigo-500 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500"
+              className="flex items-center rounded-md bg-blue-500 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500"
             >
               {loading && (
                 <svg
@@ -424,7 +424,7 @@ function Fieldset({ text, name, values }: any) {
                 name={name}
                 type="radio"
                 value={item.value}
-                className="h-4 w-4 border-white/10 bg-white/5 text-indigo-600 focus:ring-indigo-600 focus:ring-offset-gray-900"
+                className="h-4 w-4 border-white/10 bg-white/5 text-blue-600 focus:ring-blue-600 focus:ring-offset-gray-900"
               />
               <label htmlFor={item.id} className="block text-sm font-medium leading-6 text-white">
                 {item.value}
