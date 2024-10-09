@@ -12,7 +12,6 @@ import { useState } from 'react'
 import { Dialog, DialogPanel, Transition, TransitionChild } from '@headlessui/react'
 import {
   Bars3Icon,
-  ClipboardDocumentListIcon,
   XMarkIcon,
   RocketLaunchIcon,
 } from '@heroicons/react/24/outline'
@@ -26,9 +25,8 @@ function classNames(...classes: string[]) {
 }
 
 const navigation = [
-  { name: 'Signup', href: '/', icon: ClipboardDocumentListIcon, disabled: false },
-  // { name: 'Voting Pre Seed', href: '/vote/public/pre-seed', icon: RocketLaunchIcon, disabled: false },
-  // { name: 'Voting Seed', href: '/vote/public/seed', icon: RocketLaunchIcon, disabled: false },
+  { name: 'Voting Pre Seed', href: '/vote/public/pre-seed', icon: RocketLaunchIcon, disabled: false },
+  { name: 'Voting Seed', href: '/vote/public/seed', icon: RocketLaunchIcon, disabled: false },
 ]
 const events = [
   { id: 1, name: 'Seed', href: '/events/seed', initial: 'S', current: false },
