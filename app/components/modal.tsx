@@ -10,20 +10,25 @@ export default function Example({ open, setOpen, startup }: any) {
         <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0 shadow-4xl">
           <DialogPanel
             transition={true}
-            className="relative transform overflow-hidden rounded-lg bg-gray-600 px-4 pb-4 pt-5 text-left shadow-xl transition-all data-[closed]:translate-y-4 data-[closed]:opacity-0 data-[enter]:duration-300 data-[leave]:duration-200 data-[enter]:ease-out data-[leave]:ease-in sm:my-8 sm:p-6 data-[closed]:sm:translate-y-0 data-[closed]:sm:scale-95 w-full max-w-2xl"
+            className="relative transform overflow-hidden rounded-2xl bg-gray-900 shadow-2xl drop-shadow-2xl px-4 pb-4 pt-5 text-left shadow-xl transition-all data-[closed]:translate-y-4 data-[closed]:opacity-0 data-[enter]:duration-300 data-[leave]:duration-200 data-[enter]:ease-out data-[leave]:ease-in sm:my-8 sm:p-12 sm:pb-8 data-[closed]:sm:translate-y-0 data-[closed]:sm:scale-95 w-full max-w-2xl"
           >
             <div>
+              {startup.logo && startup.logo !== "" && (
+                <div className='mb-12 m-4 p-8 bg-slate-400 rounded-xl h-32 flex justify-center'>
+                  <img src={startup.logo} alt={startup.startup} className='object-contain' />
+                </div>
+              )}
               <DialogTitle as="h3" className="text-base font-semibold leading-6 text-gray-100">
                 {startup.company}
               </DialogTitle>
-              <div className="mt-2 text-gray-200">
+              <div className="mt-4 text-gray-200">
                 <ul className='list-disc ml-4 text-sm mt-4 mt-4'>
-                  <li>Currently raising funds: {startup.funding}</li>
-                  <li>Already pitched to investors: {startup.pitching}</li>
+                  <li>Currently raising funds: <span className='ml-1 italic'>{startup.funding}</span></li>
+                  <li>Already pitched to investors: <span className='ml-1 italic'>{startup.pitching}</span></li>
                 </ul>
               </div>
             </div>
-            <div className='mt-4 space-y-2'>
+            <div className='mt-8 space-y-2'>
               <Dropdown question={'What problem do you address?'} answer={startup.problem_description} />
               <Dropdown question={'How do you solve this problem?'} answer={startup.problem_solution} />
               <Dropdown question={'What is unique about your problem-solving approach?'} answer={startup.problem_approach} />

@@ -2,7 +2,7 @@ import { DocumentChartBarIcon, GlobeEuropeAfricaIcon, ArrowTopRightOnSquareIcon 
 import { Suspense, useEffect, useState } from 'react'
 import { Await, useLoaderData, useNavigate, useParams } from "@remix-run/react";
 import { Transition } from '@headlessui/react'
-import { CheckCircleIcon, ExclamationTriangleIcon } from '@heroicons/react/24/outline'
+import { CheckCircleIcon, ExclamationTriangleIcon, PhoneIcon, PhotoIcon } from '@heroicons/react/24/outline'
 import { XMarkIcon } from '@heroicons/react/20/solid'
 import Example from '~/components/modal';
 import Password from '~/components/password';
@@ -32,12 +32,12 @@ const rounds = [
 ]
 
 function isValidVoting(event: string, access: string): boolean {
-  return ((access === votings[0]) || (access === votings[0])) && ((event === rounds[0]) || (event === rounds[1]))
+  return ((access === votings[0]) || (access === votings[1])) && ((event === rounds[0]) || (event === rounds[1]))
 }
 
 export async function loader({ params }: LoaderFunctionArgs) {
   return defer({
-    registrations: fetch(Resource.GetRegistrations.url).then(e => e.json())
+    registrations: fetch('https://startupnights.fra1.cdn.digitaloceanspaces.com/pitching_registrations.json').then(e => e.json())
   })
 };
 
@@ -161,7 +161,7 @@ export default function Vote() {
                       onClick={() => {
                         setShowSucces(false)
                       }}
-                      className="inline-flex rounded-md bg-slate-500 text-slate-700 hover:text-slate-600 hover:bg-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                      className="inline-flex rounded-md bg-slate-500 text-slate-700 hover:text-slate-600 hover:bg-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                     >
                       <span className="sr-only">Close</span>
                       <XMarkIcon aria-hidden="true" className="h-5 w-5" />
@@ -188,7 +188,7 @@ export default function Vote() {
                       onClick={() => {
                         setShowError(false)
                       }}
-                      className="inline-flex rounded-md bg-slate-500 text-slate-700 hover:text-slate-600 hover:bg-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                      className="inline-flex rounded-md bg-slate-500 text-slate-700 hover:text-slate-600 hover:bg-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                     >
                       <span className="sr-only">Close</span>
                       <XMarkIcon aria-hidden="true" className="h-5 w-5" />
@@ -242,7 +242,7 @@ export default function Vote() {
                       type="text"
                       required
                       autoComplete="name"
-                      className="block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6"
+                      className="block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-blue-500 sm:text-sm sm:leading-6"
                     />
                   </div>
                 </div>
@@ -258,7 +258,7 @@ export default function Vote() {
                       type="email"
                       required
                       autoComplete="email"
-                      className="block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6"
+                      className="block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-blue-500 sm:text-sm sm:leading-6"
                     />
                   </div>
                 </div>
@@ -275,7 +275,7 @@ export default function Vote() {
                   <button
                     type="submit"
                     className={classNames(
-                      "flex w-full justify-center rounded-md px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500",
+                      "flex w-full justify-center rounded-md px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500",
                       selected.length === numberOfStartups && !alreadyVoted[`${event}`]?.voted ? 'bg-blue-600 hover:bg-blue-500' : 'bg-gray-500 hover:bg-gray-400',
                     )}
                     disabled={selected.length !== numberOfStartups || alreadyVoted[`${event}`]?.voted}
@@ -300,7 +300,7 @@ export default function Vote() {
         </div>
       </div>
 
-      <Suspense fallback={<div>Loading...</div>}>
+      <Suspense fallback={<div className='text-white'>Loading...</div>}>
         <Await resolve={data.registrations}>
           {(companies) => (
             <div className="px-4 sm:px-6 lg:px-8 mb-24">
@@ -321,6 +321,14 @@ export default function Vote() {
 
                         <div className='relative flex flex-1 flex-col rounded-lg divide-y-2 divide-gray-600'>
                           <label htmlFor={`company-${companyIdx}`} className="text-center select-none text-gray-200 text-sm font-semibold">
+                            <div className='m-4 p-8 bg-slate-400 rounded-xl h-32 flex justify-center'>
+                              {company.logo && company.logo !== "" && (
+                                <img src={company.logo} alt={company.company} className='object-contain' />
+                              )}
+                              {(!company.logo || company.logo === "") && (
+                                <PhotoIcon className='text-slate-400' />
+                              )}
+                            </div>
                             <div className="min-w-0 flex-1 text-sm leading-6 py-4">
                               {company.company}
                             </div>
@@ -387,7 +395,7 @@ export default function Vote() {
                               name={`company-${companyIdx}`}
                               type="checkbox"
                               checked={selected.indexOf(company.company) !== -1}
-                              className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
+                              className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-600"
                               onChange={(e) => {
                                 const idx = selected.indexOf(company.company)
                                 if ((e as any).target.checked) {
