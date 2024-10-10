@@ -3,24 +3,33 @@ import Table from "./table"
 function calculateScore(name: string, data: any, voter: string): number {
   let points = 0
 
-  data.forEach((list: string[]) => {
-    if (list[1] === voter) {
-      list.forEach((item: string, idx: number) => {
+  data.filter((line: string[]) => line[1] === voter).forEach((line: string[]) => {
+    if (voter === 'jury') {
+      line.forEach((item: string, idx: number) => {
         if (item === name) {
           switch (idx) {
             case 5:
               points += 5
+              break
             case 6:
               points += 4
+              break
             case 7:
               points += 3
+              break
             case 8:
               points += 2
+              break
             case 9:
               points += 1
+              break
           }
         }
       })
+    } else {
+      if (line[5] === name) {
+        points += 1
+      }
     }
   })
 
