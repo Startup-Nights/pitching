@@ -37,7 +37,7 @@ function isValidVoting(event: string, access: string): boolean {
 
 export async function loader({ params }: LoaderFunctionArgs) {
   return defer({
-    registrations: fetch('https://startupnights.fra1.cdn.digitaloceanspaces.com/pitching_registrations.json').then(e => e.json())
+    registrations: fetch(Resource.GetRegistrations.url).then(e => e.json())
   })
 };
 
@@ -308,7 +308,7 @@ export default function Vote() {
                 <fieldset>
                   <legend className="text-base font-semibold leading-6 text-gray-900">Startups</legend>
                   <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-                    {companies.filter(company => company.round === event).map((company, companyIdx) => (
+                    {companies.filter(company => company.round === event).filter(company => company.approved).map((company, companyIdx) => (
                       <div key={companyIdx} className={classNames(
                         "relative flex flex-1 flex-col rounded-lg bg-gray-800 rounded-lg",
                         (selected.indexOf(company.company) !== -1) ? "ring-2 ring-blue-500 ring-offset-4 ring-offset-slate-50 dark:ring-offset-slate-900" : "ring-0",
@@ -325,7 +325,7 @@ export default function Vote() {
                               {company.logo && company.logo !== "" && (
                                 <img src={company.logo} alt={company.company} className='object-contain' />
                               )}
-                              {(!company.logo || company.logo === "") && (
+                              {!(company.logo && company.logo !== "") && (
                                 <PhotoIcon className='text-slate-400' />
                               )}
                             </div>
