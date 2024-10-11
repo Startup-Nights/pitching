@@ -310,7 +310,7 @@ export default function Vote() {
                   <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
                     {companies.filter(company => company.round === event).filter(company => company.approved).map((company, companyIdx) => (
                       <div key={companyIdx} className={classNames(
-                        "relative flex flex-1 flex-col rounded-lg bg-gray-800 rounded-lg",
+                        "relative flex flex-1 flex-col rounded-2xl bg-gray-800 hover:scale-[1.01] transition",
                         (selected.indexOf(company.company) !== -1) ? "ring-2 ring-blue-500 ring-offset-4 ring-offset-slate-50 dark:ring-offset-slate-900" : "ring-0",
                       )}>
                         {(selected.indexOf(company.company) !== -1) && (
@@ -319,72 +319,71 @@ export default function Vote() {
                           </div>
                         )}
 
-                        <div className='relative flex flex-1 flex-col rounded-lg divide-y-2 divide-gray-600'>
+                        <div className='relative flex flex-1 flex-col rounded-lg p-3 xl:p-4'>
                           <label htmlFor={`company-${companyIdx}`} className="text-center select-none text-gray-200 text-sm font-semibold">
-                            <div className='m-4 p-8 bg-slate-400 rounded-xl h-32 flex justify-center'>
+                            <div className='p-8 bg-slate-400 rounded-xl h-32 flex justify-center'>
                               <Logo company={company} />
                             </div>
                             <div className="min-w-0 flex-1 text-sm leading-6 py-4">
                               {company.company}
                             </div>
                           </label>
-                          <div className="-mt-px flex divide-x divide-gray-200">
-                            <div className="flex w-0 flex-1">
-                              <a
-                                href={toWebsite(company.website)}
-                                className="relative inline-flex w-0 flex-1 items-center justify-center gap-x-3 rounded-br-lg border border-transparent py-4 text-sm font-semibold text-gray-400"
-                                target='_blank'
-                              >
-                                <GlobeEuropeAfricaIcon aria-hidden="true" className="h-5 w-5 text-gray-400" />
-                                Website
-                              </a>
-                            </div>
-                          </div>
-                          {(access === 'jury') && (
-                            <>
-                              {(company.pitching_deck) && (
-                                <div className="-mt-px flex divide-x divide-gray-200">
-                                  <div className="flex w-0 flex-1">
-                                    <a
-                                      href={company.pitching_deck}
-                                      className="relative inline-flex w-0 flex-1 items-center justify-center gap-x-3 rounded-br-lg border border-transparent py-4 text-sm font-semibold text-gray-400"
-                                      target='_blank'
-                                    >
-                                      <DocumentChartBarIcon aria-hidden="true" className="h-5 w-5 text-gray-400" />
-                                      Pitchdeck
-                                    </a>
-                                  </div>
-                                </div>
-                              )}
-                              {(!company.pitching_deck) && (
-                                <div className="-mt-px flex divide-x divide-gray-200">
-                                  <div className="flex w-0 flex-1">
-                                    <p className="relative inline-flex w-0 flex-1 items-center justify-center gap-x-3 rounded-br-lg border border-transparent py-4 text-sm font-semibold text-gray-400 italic">
-                                      No pitchdeck provided
-                                    </p>
-                                  </div>
-                                </div>
-                              )}
 
-                            </>
-                          )}
-                          {access === 'jury' && (
-                            <div className="-mt-px flex divide-x divide-gray-200">
+                          <div className={classNames('grid', access === 'jury' ? '2xl:grid-cols-2 gap-2' : '')}>
+                            <div className="flex divide-x divide-gray-200 group">
                               <div className="flex w-0 flex-1">
-                                <button
-                                  className="relative inline-flex w-0 flex-1 items-center justify-center gap-x-3 rounded-br-lg border border-transparent py-4 text-sm font-semibold text-gray-400"
-                                  onClick={() => {
-                                    setClickedStartup(company)
-                                    setModalOpen(true)
-                                  }}
+                                <a
+                                  href={toWebsite(company.website)}
+                                  className="relative inline-flex w-0 flex-1 items-center justify-center gap-x-3 rounded-lg border border-transparent py-4 text-sm font-semibold text-gray-400 group-hover:text-gray-200 bg-gray-700 group-hover:bg-gray-600"
+                                  target='_blank'
                                 >
-                                  <ArrowTopRightOnSquareIcon aria-hidden="true" className="h-5 w-5 text-gray-400" />
-                                  More information
-                                </button>
+                                  <GlobeEuropeAfricaIcon aria-hidden="true" className="h-5 w-5 text-gray-400 group-hover:text-gray-200" />
+                                  <span className='truncate'>Website</span>
+                                </a>
                               </div>
                             </div>
-                          )}
-                          <div className="ml-3 flex h-6 items-center hidden">
+                            {(access === 'jury') && (company.pitching_deck) && (
+                              <div className="flex divide-x divide-gray-200 group">
+                                <div className="flex w-0 flex-1">
+                                  <a
+                                    href={company.pitching_deck}
+                                    className="relative inline-flex w-0 flex-1 items-center justify-center gap-x-3 rounded-lg border border-transparent py-4 text-sm font-semibold text-gray-400 group-hover:text-gray-200 bg-gray-700 group-hover:bg-gray-600"
+                                    target='_blank'
+                                  >
+                                    <DocumentChartBarIcon aria-hidden="true" className="h-5 w-5 text-gray-400 group-hover:text-gray-200" />
+                                    <span className='truncate'>Pitchdeck</span>
+                                  </a>
+                                </div>
+                              </div>
+                            )}
+                            {(access === 'jury') && (!company.pitching_deck) && (
+                              <div className="flex divide-x divide-gray-200">
+                                <div className="flex w-0 flex-1">
+                                  <p className="relative inline-flex w-0 flex-1 items-center justify-center gap-x-3 rounded-lg border border-transparent py-4 px-4 text-sm font-semibold text-gray-400 italic bg-gray-900">
+                                    <span className='truncate'>No pitchdeck provided</span>
+                                  </p>
+                                </div>
+                              </div>
+                            )}
+                            {access === 'jury' && (
+                              <div className="flex divide-x divide-gray-200 group">
+                                <div className="flex w-0 flex-1">
+                                  <button
+                                    className="relative inline-flex w-0 flex-1 items-center justify-center gap-x-3 rounded-lg border border-transparent py-4 text-sm font-semibold text-gray-400 group-hover:text-gray-200 bg-gray-700 group-hover:bg-gray-600"
+                                    onClick={() => {
+                                      setClickedStartup(company)
+                                      setModalOpen(true)
+                                    }}
+                                  >
+                                    <ArrowTopRightOnSquareIcon aria-hidden="true" className="h-5 w-5 text-gray-400 group-hover:text-gray-200" />
+                                    <span className='truncate hidden 3xl:flex'>More information</span>
+                                    <span className='truncate 3xl:hidden'>Infos</span>
+                                  </button>
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                          <div className="hidden">
                             <input
                               id={`company-${companyIdx}`}
                               name={`company-${companyIdx}`}
