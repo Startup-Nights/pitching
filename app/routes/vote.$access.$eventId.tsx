@@ -322,12 +322,7 @@ export default function Vote() {
                         <div className='relative flex flex-1 flex-col rounded-lg divide-y-2 divide-gray-600'>
                           <label htmlFor={`company-${companyIdx}`} className="text-center select-none text-gray-200 text-sm font-semibold">
                             <div className='m-4 p-8 bg-slate-400 rounded-xl h-32 flex justify-center'>
-                              {company.logo && company.logo !== "" && (
-                                <img src={company.logo} alt={company.company} className='object-contain' />
-                              )}
-                              {!(company.logo && company.logo !== "") && (
-                                <PhotoIcon className='text-slate-400' />
-                              )}
+                              <Logo company={company} />
                             </div>
                             <div className="min-w-0 flex-1 text-sm leading-6 py-4">
                               {company.company}
@@ -422,5 +417,19 @@ export default function Vote() {
         </Await>
       </Suspense>
     </div >
+  )
+}
+
+function Logo({ company }: any): any {
+  const available = company.logo && company.logo !== ""
+
+  if (available) {
+    return (
+      <img src={company.logo} alt={company.company} className='object-contain' />
+    )
+  }
+
+  return (
+    <PhotoIcon className='text-slate-300' />
   )
 }
