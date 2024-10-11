@@ -5,7 +5,7 @@ import Dropdown from './dropdown'
 
 export default function Example({ open, setOpen, startup }: any) {
   return (
-    <Dialog open={open} onClose={setOpen} className="relative z-10">
+    <Dialog open={open} onClose={setOpen} className="relative z-10 transition">
       <div className="fixed inset-0 z-10 w-screen overflow-y-auto">
         <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0 shadow-4xl">
           <DialogPanel
