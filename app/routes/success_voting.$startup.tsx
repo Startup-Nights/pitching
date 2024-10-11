@@ -1,7 +1,7 @@
 import { useParams } from "@remix-run/react"
 
 export default function Signup() {
-  const startup = useParams().startup as string
+  const startup = decodeURIComponent(useParams().startup as string)
 
   return (
     <div className="xl:pl-72 max-w-6xl">

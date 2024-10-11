@@ -106,7 +106,8 @@ export default function Vote() {
       if (access === 'public') {
         alreadyVoted[`${event}`] = { "voted": true }
         localStorage.setItem("startup-nights-voting", JSON.stringify(alreadyVoted))
-        navigate(`/success_voting/${selected[0]}`)
+        const uri = encodeURIComponent(selected[0])
+        navigate(`/success_voting/${uri}`)
       } else {
         setShowSucces(true)
         setSelected([])
