@@ -3,8 +3,6 @@ import { Await, useLoaderData } from "@remix-run/react";
 import { Suspense, useState } from "react";
 import Votes from "~/components/votes";
 import Password from "~/components/password";
-import { Resource } from "sst";
-
 
 export async function loader({ params }: LoaderFunctionArgs) {
   return defer({
@@ -15,10 +13,9 @@ export async function loader({ params }: LoaderFunctionArgs) {
       },
       body: JSON.stringify({
         id: '1F4r2nCsQUIE38qOJaBzuyqHOtgVc3KshhucyOQI6zBU',
-        range: 'A:I',
+        range: 'A:M',
       }),
     }).then(e => e.json()),
-    registrations: fetch(Resource.GetRegistrations.url).then(e => e.json())
   })
 };
 
@@ -38,11 +35,7 @@ export default function Overview() {
         <Suspense fallback={<div>Loading...</div>}>
           <Await resolve={data.votes}>
             {(v: any) => (
-              <Await resolve={data.registrations}>
-                {(r: any) => (
-                  <Votes votes={v.data} registrations={r} />
-                )}
-              </Await>
+              <Votes votes={v.data} />
             )}
           </Await>
         </Suspense>
