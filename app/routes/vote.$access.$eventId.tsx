@@ -1,8 +1,8 @@
 import { DocumentChartBarIcon, GlobeEuropeAfricaIcon, ArrowTopRightOnSquareIcon } from '@heroicons/react/20/solid'
 import { Suspense, useEffect, useState } from 'react'
-import { Await, useLoaderData, useNavigate, useParams } from "@remix-run/react";
+import { Await, isRouteErrorResponse, useLoaderData, useNavigate, useParams, useRouteError } from "@remix-run/react";
 import { Transition } from '@headlessui/react'
-import { CheckCircleIcon, ExclamationTriangleIcon, PhoneIcon, PhotoIcon } from '@heroicons/react/24/outline'
+import { CheckCircleIcon, ExclamationTriangleIcon, PhotoIcon } from '@heroicons/react/24/outline'
 import { XMarkIcon } from '@heroicons/react/20/solid'
 import Example from '~/components/modal';
 import Password from '~/components/password';
@@ -431,5 +431,20 @@ function Logo({ company }: any): any {
 
   return (
     <PhotoIcon className='text-slate-300' />
+  )
+}
+
+export function ErrorBoundary() {
+  const error = useRouteError();
+  if (isRouteErrorResponse(error)) {
+    <div className="xl:ml-72 max-w-full text-white p-4">
+      <p>Something went wrong. Please try again.</p>
+    </div>
+  }
+
+  return (
+    <div className="xl:ml-72 max-w-full text-white p-4">
+      <p>Something went wrong. Please try again.</p>
+    </div>
   )
 }
