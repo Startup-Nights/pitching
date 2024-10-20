@@ -138,6 +138,22 @@ export default function Vote() {
     )
   }
 
+  if (access !== 'jury') {
+    return (
+      <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
+        <div className="sm:mx-auto sm:w-full sm:max-w-sm">
+          <h2 className="mt-10 text-2xl font-bold leading-9 tracking-tight text-gray-100">
+            Thank you for taking part in the voting!
+          </h2>
+
+          <p className="mt-8 text-sm text-gray-500">
+            The voting is now closed and the winners will be announced shortly.
+          </p>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="xl:pl-72 max-w-full">
       <div
